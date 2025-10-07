@@ -8,9 +8,9 @@ const { id, thumbnailUrl, description } = Astro.props
 ---
 
 <article
-  class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl
-    transition-shadow duration-300 cursor-pointer dark:bg-gray-800
-    dark:border dark:border-gray-700"
+  class="rounded-lg shadow-md overflow-hidden
+    transition-shadow duration-300 cursor-pointer bg-gray-800
+    border border-gray-700 hover:border-gray-600"
   data-trigger="play-video"
   data-videoid={id}
 >
@@ -18,7 +18,7 @@ const { id, thumbnailUrl, description } = Astro.props
       src={thumbnailUrl} alt={description}></img>
   <div class="p-4">
     <p
-      class="font-medium text-gray-700 line-clamp-2 dark:text-gray-300"
+      class="font-medium line-clamp-2 text-gray-300 hover:text-gray-200"
     >
       {description}
     </p>

@@ -28,19 +28,19 @@ export default function VideoModal({ listenOnId }) {
 
   return (
     <div
-        class="fixed inset-0 bg-black/80 grid place-items-center z-50
-          dark:bg-gray-800/90"
+        class="fixed inset-0 grid place-items-center z-50
+          bg-gray-800/90"
         onClick={() => setCurrentVideoId(null)}
     >
       <div
-          class="relative bg-white w-[90vw] max-w-4xl p-4 rounded-lg shadow-xl
-            dark:bg-gray-700"
+          class="relative w-[90vw] max-w-4xl p-4 rounded-lg shadow-xl
+            bg-gray-700"
           onClick={(e) => e.stopPropagation()}
       >
         <button
-            class="absolute top-[-15px] right-[-15px] bg-white border-2
-                border-gray-300 rounded-full w-8 h-8 text-xl cursor-pointer
-                dark:bg-gray-700 dark:text-white dark:border-gray-600"
+            class="absolute top-[-15px] right-[-15px] border-2
+                rounded-full w-8 h-8 text-xl cursor-pointer
+                bg-gray-700 text-white border-gray-600"
             onClick={() => setCurrentVideoId(null)}
         >
           &times;
