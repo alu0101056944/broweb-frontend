@@ -27,13 +27,24 @@ export default function VideoModal({ listenOnId }) {
   }
 
   return (
-    <div className="modal-overlay" onClick={() => setCurrentVideoId(null)}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="close-button" onClick={() => setCurrentVideoId(null)}>
+    <div
+        class="fixed inset-0 bg-black/80 grid place-items-center z-50"
+        onClick={() => setCurrentVideoId(null)}
+    >
+      <div
+          class="relative bg-white w-[90vw] max-w-4xl p-4 rounded-lg shadow-xl"
+          onClick={(e) => e.stopPropagation()}
+      >
+        <button
+            class="absolute top-[-15px] right-[-15px] bg-white border-2
+                border-gray-300 rounded-full w-8 h-8 text-xl cursor-pointer"
+            onClick={() => setCurrentVideoId(null)}
+        >
           &times;
         </button>
-        <div className="video-container">
+        <div class="aspect-video">
           <iframe
+            class="w-full h-full"
             src={`https://www.youtube.com/embed/${currentVideoId}?autoplay=1`}
             title="YouTube video player"
             allowFullScreen
