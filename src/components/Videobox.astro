@@ -7,9 +7,15 @@ export interface Props {
 const { id, thumbnailUrl, description } = Astro.props
 ---
 
-<article data-trigger="play-video" data-videoid={id}>
-  <img src={thumbnailUrl} alt={description}></img>
-  <div>
-    <p>{description}</p>
+<article
+  class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl
+      transition-shadow duration-300 cursor-pointer"
+  data-trigger="play-video"
+  data-videoid={id}
+>
+  <img class="w-full aspect-video object-cover"
+      src={thumbnailUrl} alt={description}></img>
+  <div class="p-4">
+    <p class="font-medium text-gray-700 line-clamp-2">{description}</p>
   </div>
 </article>
