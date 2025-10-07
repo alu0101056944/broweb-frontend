@@ -1,4 +1,6 @@
 ---
+import '../styles/global.css';
+
 export interface Props {
   title: string;
 }
@@ -14,16 +16,23 @@ const { title } = Astro.props
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 	</head>
-	<body>
-    <header>
-      <nav>
-        <a href="/">Proyectos</a>
-        <a href="/about">Sobre mi</a>
-        <a href="/contact">Contacto</a>
-      </nav>
+	<body class="flex flex-col min-h-screen bg-gray-50 text-gray-800">
+    <header class="w-full">
+      <div class="flex gap-x-2 max-w-5xl mx-auto px-4 py-4 items-center">
+        <h1 class="text-xl font-bold">David Barrios</h1>
+        <div class="flex flex-1 flex-row-reverse items-center">
+          <nav class="flex gap-6">
+            <a href="/">Proyectos</a>
+            <a href="/about">Sobre mi</a>
+            <a href="/contact">Contacto</a>
+          </nav>
+        </div>
+      </div>
     </header>
-		<main>
-      <slot/>
+		<main class="flex-1 w-full">
+      <div class="max-w-5xl mx-auto px-4 py-8">
+        <slot/>
+      </div>
     </main>
 	</body>
 </html>
