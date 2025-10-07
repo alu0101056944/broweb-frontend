@@ -1,7 +1,43 @@
 ---
 import BaseLayout from '../layout/BaseLayout.astro'
+
+import VideoModal from '../components/Videomodal.jsx'
+import Videobox from '../components/Videobox.astro'
+
+const videos = [
+  {
+    id: 'jJB20n4m7fM',
+    description: ' Sigmoid (Order Combat) - Borderlands 4 Soundtrack OST',
+    thumbnailUrl: 'https://img.youtube.com/vi/jJB20n4m7fM/maxresdefault.jpg'
+  },
+  {
+    id: 'ocATw9smhj8',
+    description: 'Face Puncher (Ripper Combat) - Borderlands 4 Soundtrack OST',
+    thumbnailUrl: 'https://img.youtube.com/vi/ocATw9smhj8/maxresdefault.jpg'
+  },
+  {
+    id: 'XACGhuGfW1I',
+    description: 'My Friend Arjay (Arjay Boss Fight) - Borderlands 4 Soundtrack OST',
+    thumbnailUrl: 'https://img.youtube.com/vi/XACGhuGfW1I/maxresdefault.jpg'
+  },
+  {
+    id: 'LeMk0yiSoq4',
+    description: 'UKF Drum & Bass: Best of Drum & Bass 2023 Mix',
+    thumbnailUrl: 'https://img.youtube.com/vi/LeMk0yiSoq4/maxresdefault.jpg'
+  }
+]
 ---
 
 <BaseLayout title="David Barrios: Portfolio">
+  <div id="video-gallery">
+    {videos.map(video => (
+      <Videobox
+        id={video.id}
+        thumbnailUrl={video.thumbnailUrl}
+        description={video.description}
+      />
+    ))}
+  </div>
 
+  <VideoModal client:load listenOnId="video-gallery"/>
 </BaseLayout>

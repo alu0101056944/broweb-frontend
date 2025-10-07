@@ -1,0 +1,15 @@
+---
+export interface Props {
+  id: string;
+  thumbnailUrl: string;
+  description: string;
+}
+const { id, thumbnailUrl, description } = Astro.props
+---
+
+<article data-trigger="play-video" data-videoid={id}>
+  <img src={thumbnailUrl} alt={description}></img>
+  <div>
+    <p>{description}</p>
+  </div>
+</article>
