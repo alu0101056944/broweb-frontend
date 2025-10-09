@@ -4,35 +4,17 @@ import BaseLayout from '../layout/BaseLayout.astro'
 import VideoModal from '../components/Videomodal.jsx'
 import Videobox from '../components/Videobox.astro'
 
-const videos = [
-  {
-    id: 'jJB20n4m7fM',
-    description: ' Sigmoid (Order Combat) - Borderlands 4 Soundtrack OST',
-    thumbnailUrl: 'https://img.youtube.com/vi/jJB20n4m7fM/maxresdefault.jpg'
-  },
-  {
-    id: 'ocATw9smhj8',
-    description: 'Face Puncher (Ripper Combat) - Borderlands 4 Soundtrack OST',
-    thumbnailUrl: 'https://img.youtube.com/vi/ocATw9smhj8/maxresdefault.jpg'
-  },
-  {
-    id: 'XACGhuGfW1I',
-    description: 'My Friend Arjay (Arjay Boss Fight) - Borderlands 4 Soundtrack OST',
-    thumbnailUrl: 'https://img.youtube.com/vi/XACGhuGfW1I/maxresdefault.jpg'
-  },
-  {
-    id: 'LeMk0yiSoq4',
-    description: 'UKF Drum & Bass: Best of Drum & Bass 2023 Mix',
-    thumbnailUrl: 'https://img.youtube.com/vi/LeMk0yiSoq4/maxresdefault.jpg'
-  }
-]
+const response = await fetch('https://broweb-six.vercel.app/api/videos?limit=1000');
+const data = await response.json();
+const videos = data.docs;
+
 ---
 
 <BaseLayout title="David Barrios: Portfolio">
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="video-gallery">
     {videos.map(video => (
       <Videobox
-        id={video.id}
+        id={video.videoId}
         thumbnailUrl={video.thumbnailUrl}
         description={video.description}
       />

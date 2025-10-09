@@ -5,10 +5,10 @@ export default function VideoModal({ listenOnId }) {
 
   useEffect(() => {
     const handleGalleryClick = (event) => {
-      const playButton = event.target.closest('[data-trigger="play-video"]');
+      const playCard = event.target.closest('[data-trigger="play-video"]');
       
-      if (playButton) {
-        const videoId = playButton.dataset.videoid;
+      if (playCard) {
+        const videoId = playCard.dataset.videoid;
         setCurrentVideoId(videoId);
       }
     };
@@ -57,5 +57,3 @@ export default function VideoModal({ listenOnId }) {
     </div>
   );
 }
-
-// TODO: Replace className with style tailwind properties
