@@ -38,9 +38,9 @@ export default function VideoModal({ listenOnId }) {
           onClick={(e) => e.stopPropagation()}
       >
         <button
-            class="absolute top-[-15px] right-[-15px] border-2
-                rounded-full w-8 h-8 text-xl cursor-pointer
-                bg-gray-700 text-white border-gray-600"
+            class="absolute top-[-10px] right-[-10px] border-2
+                rounded-full w-6 h-6 text-sm cursor-pointer
+                bg-gray-700 text-white border-gray-600 "
             onClick={() => setCurrentVideoId(null)}
         >
           &times;
