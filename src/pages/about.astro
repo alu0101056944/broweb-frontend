@@ -1,18 +1,22 @@
 ---
+import typography from '@tailwindcss/typography';
+
 import BaseLayout from "../layout/BaseLayout.astro"
+
+import RichTextRenderer from "../components/RichRenderer"
+
+let aboutContent = 'Error de recepción de contenido.'
+const response = await fetch(`${import.meta.env.NEXT_PUBLIC_SERVER_URL}/api/globals/about-content`);
+if (response.ok) {
+  const pageData = await response.json();
+  aboutContent = pageData.content;
+}
 ---
 
 <BaseLayout title="David Barrios: Sobre mi">
-  <p>Productor audiovisual especializado en postproducción de vídeo y en postproducción de audio.</p>
-  <p>Mi trayectoria comenzó en la adolescencia, creando vídeos de videojuegos y produciendo música propia, lo que me llevó a descubrir mi pasión por la imagen y el sonido. Desde entonces, he seguido desarrollando mis habilidades técnicas y creativas con herramientas como After Effects, Premiere Pro y Davinci Resolve Studio para edición de vídeo y VFX, y Reaper y Cubase para composición y tratamiento de sonido, ejerciendo para proyectos para empresas:</p>
 
-  <li>Edición de vídeo ágil y narrativa.</li>
-  <li>Motion graphics y efectos visuales.</li>
-  <li>Producción, mezcla y masterización de audio.</li>
-  <li>Integración completa de imagen + sonido en un mismo flujo de trabajo.</li>
+  <div class="prose-invert lg:prose-xl max-w-none">
+    {aboutContent && <RichTextRenderer data={aboutContent} client:load />}
+  </div>
 
-  <h1>🎯 Objetivo</h1>
-  <p>Mi meta es aportarle el máximo valor a los demás con mis conocimientos y herramientas.</p>
-
-  <p>🚀 Abierto a colaboraciones, proyectos freelance y oportunidades presenciales y en remoto.</p>
 </BaseLayout>

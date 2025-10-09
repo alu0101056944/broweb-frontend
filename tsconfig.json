@@ -2,8 +2,9 @@
   "extends": "astro/tsconfigs/strict",
   "include": [
     ".astro/types.d.ts",
-    "**/*"
-  ],
+    "src/**/*.ts",      
+    "src/**/*.tsx"
+, "src/components/RichRenderer.jsx", "src/components/Videomodal.jsx"  ],
   "exclude": [
     "dist"
   ],
