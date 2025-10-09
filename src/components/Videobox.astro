@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+
 export interface Props {
   id: string;
   thumbnailUrl: string;
@@ -14,8 +16,9 @@ const { id, thumbnailUrl, description } = Astro.props
   data-trigger="play-video"
   data-videoid={id}
 >
-  <img class="w-full aspect-video object-cover"
-      src={thumbnailUrl} alt={description}></img>
+  <Image class="w-full h-auto aspect-video object-cover"
+      src={thumbnailUrl} alt={description}
+      width="1280" height="720"/>
   <div class="p-4">
     <p
       class="font-medium line-clamp-2 text-gray-300"
