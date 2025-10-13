@@ -15,7 +15,19 @@ if (response.ok) {
 
 <BaseLayout title="Contacto — David J. Barrios">
 
-  <div class="prose-invert lg:prose-xl max-w-none break-words">
+  <div
+    class="prose-invert lg:prose-xl max-w-none prose-a:text-red-200
+      prose-a:hover:text-red-100 prose-il:text-red-500
+      prose-ul:list-disc prose-ul:pl-6
+      prose-ol:list-decimal prose-ol:pl-6
+      prose-li:marker:text-slate-400
+      prose-blockquote:border-l-4
+      prose-blockquote:border-slate-500
+      prose-blockquote:pl-6
+      prose-blockquote:italic
+      prose-blockquote:text-slate-400
+      prose-blockquote:not-prose"
+  >
     {aboutContent && <RichTextRenderer data={aboutContent} client:load />}
   </div>
 
