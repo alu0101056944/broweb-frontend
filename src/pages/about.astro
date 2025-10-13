@@ -35,8 +35,7 @@ const alignmentClasses = {
       prose-blockquote:pl-6
       prose-blockquote:italic
       prose-blockquote:text-slate-400
-      prose-blockquote:not-prose
-      text-justify"
+      prose-blockquote:not-prose"
   >
     {contentBlocks && contentBlocks.length > 0 ? (
       contentBlocks.map(block => {
@@ -78,13 +77,13 @@ const alignmentClasses = {
                     alt={block.altText}
                     class="rounded-lg shadow-lg"
                   />
-                  <figcaption class="text-center text-sm text-slate-400 mt-2 text-justify">
+                  <figcaption class="text-center text-sm text-slate-400 mt-2">
                     {block.altText}
                   </figcaption>
                 </figure>
               )}
 
-              <div class="shrink max-w-3/4 min-w-1/4 p-2 text-justify">
+              <div class="shrink max-w-3/4 min-w-1/4 p-2">
                 <RichTextRenderer data={block.richText} client:load />
               </div>
             </div>
