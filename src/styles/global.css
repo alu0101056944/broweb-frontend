@@ -28,6 +28,15 @@
   src: url('/fonts/manrope-v20-latin-500.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
 
+@font-face {
+  font-display: swap;
+  font-family: 'Bank Fothic';
+  src: url('/fonts/Bank-Gothic-Light-Regular.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+}
+
 @theme {
   --font-display: 'Manrope', sans-serif;
+  --font-logo: 'Bank Fothic', sans-serif;
 }
