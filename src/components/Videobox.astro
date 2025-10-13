@@ -11,17 +11,17 @@ const { id, thumbnailUrl, description } = Astro.props
 
 <article
   class="rounded-sm shadow-md overflow-hidden
-    transition-shadow duration-300 cursor-pointer bg-gray-900
-    border border-gray-800 hover:border-gray-700"
+    transition-shadow duration-300 cursor-pointer bg-black
+    hover:border-gray-700"
   data-trigger="play-video"
   data-videoid={id}
 >
   <Image class="w-full h-auto aspect-video object-cover"
       src={thumbnailUrl} alt={description}
       width="1280" height="720"/>
-  <div class="p-4">
+  <div class="p-4 py-15">
     <p
-      class="font-medium line-clamp-2 text-gray-300"
+      class="font-medium text-sm line-clamp-1 text-gray-200"
     >
       {description}
     </p>
