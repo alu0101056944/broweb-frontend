@@ -1,16 +1,25 @@
 ---
+import { Image } from 'astro:assets';
 import typography from '@tailwindcss/typography';
 
 import BaseLayout from "../layout/BaseLayout.astro"
 
 import RichTextRenderer from "../components/RichRenderer"
 
-let aboutContent = 'Error de recepción de contenido.'
+let contentBlocks: any[] = [];
 const response = await fetch(`${import.meta.env.NEXT_PUBLIC_SERVER_URL}/api/globals/contact-content`);
 if (response.ok) {
   const pageData = await response.json();
-  aboutContent = pageData.content;
+  contentBlocks = pageData.content;
+} else {
+  console.error('Failed to fetch content from Payload.')
 }
+
+const alignmentClasses = {
+  left: 'mr-auto',
+  center: 'mx-auto',
+  right: 'ml-auto',
+};
 ---
 
 <BaseLayout title="Contacto — David J. Barrios">
@@ -26,9 +35,67 @@ if (response.ok) {
       prose-blockquote:pl-6
       prose-blockquote:italic
       prose-blockquote:text-slate-400
-      prose-blockquote:not-prose"
+      prose-blockquote:not-prose
+      text-justify"
   >
-    {aboutContent && <RichTextRenderer data={aboutContent} client:load />}
+    {contentBlocks && contentBlocks.length > 0 ? (
+      contentBlocks.map(block => {
+        if (block.blockType === 'richTextBlock') {
+          return <RichTextRenderer data={block.richText} client:load />;
+        }
+        
+        if (block.blockType === 'imageBlock') {
+          const alignmentClass = alignmentClasses[block.alignment] ?? alignmentClasses.center;
+
+          return (
+            <figure class:list={["w-fit my-8", alignmentClass]}>
+              <Image 
+                src={block.imageUrl} 
+                alt={block.altText}
+                width={block.width > 0 ? block.width : undefined}
+                height={block.height > 0 ? block.height : undefined}
+                class="rounded-lg shadow-lg"
+              />
+              <figcaption class="text-center text-sm text-slate-400 mt-2">
+                {block.altText}
+              </figcaption>
+            </figure>
+          )
+        }
+
+        if (block.blockType === 'textWithImageBlock') {
+          const flexClass = block.alignment === 'right' ? 'md:flex-row-reverse' : 'md:flex-row';
+
+          return (
+            <div class:list={["flex flex-col w-full md:flex-row my-4 items-center", flexClass]}>
+              
+              {block.imageUrl && (
+                <figure class="flex flex-col m-auto p-2 max-w-3/4">
+                  <Image
+                    src={block.imageUrl}
+                    width={block.width}
+                    height={block.height}
+                    alt={block.altText}
+                    class="rounded-lg shadow-lg"
+                  />
+                  <figcaption class="text-center text-sm text-slate-400 mt-2 text-justify">
+                    {block.altText}
+                  </figcaption>
+                </figure>
+              )}
+
+              <div class="shrink max-w-3/4 min-w-1/4 p-2 text-justify">
+                <RichTextRenderer data={block.richText} client:load />
+              </div>
+            </div>
+          );
+        }
+
+        return null;
+      })
+    ) : (
+      <p>Error de recepción de contenido.</p>
+    )}
   </div>
 
 </BaseLayout>
