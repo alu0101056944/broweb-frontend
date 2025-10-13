@@ -6,13 +6,27 @@ import BaseLayout from "../layout/BaseLayout.astro"
 
 import RichTextRenderer from "../components/RichRenderer"
 
+const serverUrl = import.meta.env.NEXT_PUBLIC_SERVER_URL;
+
+const [contentResponse, infoResponse] = await Promise.all([
+  fetch(`${serverUrl}/api/globals/contact-content`),
+  fetch(`${serverUrl}/api/globals/contact-info`)
+]);
+
 let contentBlocks: any[] = [];
-const response = await fetch(`${import.meta.env.NEXT_PUBLIC_SERVER_URL}/api/globals/contact-content`);
-if (response.ok) {
-  const pageData = await response.json();
-  contentBlocks = pageData.content;
+if (contentResponse.ok) {
+  const pageData = await contentResponse.json();
+  contentBlocks = pageData.content || [];
 } else {
   console.error('Failed to fetch content from Payload.')
+}
+
+let contactEmail = 'Failed to fetch email from Payload';
+if (infoResponse.ok) {
+  const contactData = await infoResponse.json();
+  contactEmail = contactData.email;
+} else {
+  console.error('Failed to fetch contact info from Payload.');
 }
 
 const alignmentClasses = {
@@ -20,17 +34,6 @@ const alignmentClasses = {
   center: 'mx-auto',
   right: 'ml-auto',
 };
-
-interface ContactInfo {
-  email: string;
-}
-
-let contactEmail = 'Failed to fetch email from Payload';
-const response2 = await fetch(`${import.meta.env.NEXT_PUBLIC_SERVER_URL}/api/globals/contact-info`);
-if (response2.ok) {
-  const contactData: ContactInfo = await response.json();
-  contactEmail = contactData.email;
-}
 ---
 
 <BaseLayout title="Contacto — David J. Barrios">
@@ -106,8 +109,9 @@ if (response2.ok) {
     ) : (
       <p>Error de recepción de contenido.</p>
     )}
+  </div>
 
-    {contactEmail && (
+  {contactEmail && (
       <div class="mt-12 flex justify-center">
         <a 
           href={`mailto:${contactEmail}`} 
@@ -141,6 +145,5 @@ if (response2.ok) {
         </a>
       </div>
     )}
-  </div>
 
 </BaseLayout>
