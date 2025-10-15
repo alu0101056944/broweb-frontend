@@ -1,0 +1,68 @@
+---
+// src/components/Header.astro
+
+const { pathname } = Astro.url;
+
+function isActive(href: string) {
+  if (href === '/') {
+    return pathname === '/';
+  }
+  return pathname.startsWith(href);
+}
+
+const baseClasses = "font-logo font-light text-gray-300 hover:text-gray-100"
+const activeClasses = "text-white"
+---
+
+<header>
+  <nav class="flex flex-wrap flex-col gap-3 pr-10 md:pr-0 md:gap-8  md:flex-row">
+    <a
+      href="/"
+      class:list={[
+        baseClasses,
+        { [activeClasses]: isActive('/') }
+      ]}
+    >
+      Projects
+    </a>
+    <a
+      href="/video-vfx"
+      class:list={[
+        baseClasses,
+        { [activeClasses]: isActive('/video-vfx') }
+      ]}
+    >
+      Video/VFX
+    </a>
+    <a
+      href="/audio-music"
+      class:list={[
+        baseClasses,
+        { [activeClasses]: isActive('/audio-music') }
+      ]}
+    >
+      Audio/Music
+    </a>
+
+    <a
+      href="/about"
+      class:list={[
+        baseClasses,
+        { [activeClasses]: isActive('/about') }
+      ]}
+    >
+      About
+    </a>
+    <a
+      href="/contact"
+      class:list={[
+        baseClasses,
+        { [activeClasses]: isActive('/contact') }
+      ]}
+    >
+      Contact
+    </a>
+  </nav>
+</header>
+
+
