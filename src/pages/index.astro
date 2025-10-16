@@ -20,9 +20,10 @@ if (videoResponse.ok) {
 
   const youtubeUrlRegexp = /(?:watch\?v=|youtu\.be\/|\/(?:embed|shorts|live)\/)([a-zA-Z0-9_-]{11})/
   videosIdAndDescription = videos
-    .map(({ videoUrl, description, priority }) => {
+    .map(({ videoUrl, description, priority, thumbnailUrl }) => {
         const result = videoUrl.match(youtubeUrlRegexp)
-        return result ? { videoId: result[1], description, priority: parseInt(priority) } : null
+        return result ? { videoId: result[1], description, priority: parseInt(priority),
+            thumbnailUrl } : null
       })
     .filter(_ => _ != null);
 } else {
@@ -38,13 +39,14 @@ if (musicResponse.ok) {
 
   const youtubeUrlRegexp = /(?:watch\?v=|youtu\.be\/|\/(?:embed|shorts|live)\/)([a-zA-Z0-9_-]{11})/
   musicIdAndDescription = videos
-    .map(({ videoUrl, description, priority }) => {
+    .map(({ videoUrl, description, priority, thumbnailUrl }) => {
         const result = videoUrl.match(youtubeUrlRegexp)
-        return result ? { videoId: result[1], description, priority: parseInt(priority) } : null
+        return result ? { videoId: result[1], description, priority: parseInt(priority),
+          thumbnailUrl } : null
       })
     .filter(_ => _ != null);
 } else {
-  console.error("Failed to fetch videos from API:", musicResponse.status,
+  console.error("Failed to fetch music from API:", musicResponse.status,
       musicResponse.statusText);
 }
 
@@ -57,11 +59,12 @@ const allIdAndDescription = musicIdAndDescription
 <BaseLayout title="David J. Barrios">
   <!-- <h2 class="font-display font-light tracking-[0.15em] mb-23">Seleccionar proyecto</h2> -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-15" id="video-gallery">
-    {allIdAndDescription.map(({ videoId, description }) => (
+    {allIdAndDescription.map(({ videoId, description, thumbnailUrl }) => (
       <Videobox
         id={videoId}
-        thumbnailUrl={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
+        thumbnailUrl={thumbnailUrl === '' ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : thumbnailUrl}
         description={description}
+        fallbackThumbnailUrl={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
       />
     ))}
   </div>

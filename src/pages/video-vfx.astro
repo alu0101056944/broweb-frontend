@@ -10,13 +10,16 @@ const serverUrl = import.meta.env.NEXT_PUBLIC_SERVER_URL;
 const response = await fetch(`${serverUrl}api/videos?limit=1000&sort=priority`);
 
 interface VideoInput {
-  videoUrl: string,
-  description: string,
+  videoUrl: string;
+  description: string;
+  thumbnailUrl: string;
+  priority?: number;
 }
 
 interface VideoOutput {
-  videoId: string,
-  description: string,
+  videoId: string;
+  description: string;
+  thumbnailUrl: string;
 }
 
 let videosIdAndDescription = [] as VideoOutput[]
@@ -27,9 +30,9 @@ if (response.ok) {
 
   const youtubeUrlRegexp = /(?:watch\?v=|youtu\.be\/|\/(?:embed|shorts|live)\/)([a-zA-Z0-9_-]{11})/
   videosIdAndDescription = videos
-    .map(({ videoUrl, description }) => {
+    .map(({ videoUrl, description, thumbnailUrl }) => {
         const result = videoUrl.match(youtubeUrlRegexp)
-        return result ? { videoId: result[1], description } : null
+        return result ? { videoId: result[1], description, thumbnailUrl } as VideoOutput: null
       })
     .filter(_ => _ != null);
 } else {
@@ -42,11 +45,12 @@ if (response.ok) {
 <BaseLayout title="Video/VFX — David J. Barrios">
   <!-- <h2 class="font-display font-light tracking-[0.15em] mb-23">Seleccionar proyecto</h2> -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-15" id="video-gallery">
-    {videosIdAndDescription.map(({ videoId, description }) => (
+    {videosIdAndDescription.map(({ videoId, description, thumbnailUrl }) => (
       <Videobox
         id={videoId}
-        thumbnailUrl={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
+        thumbnailUrl={thumbnailUrl === '' ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : thumbnailUrl}
         description={description}
+        fallbackThumbnailUrl={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
       />
     ))}
   </div>
