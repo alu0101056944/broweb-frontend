@@ -1,73 +1,147 @@
 ---
+import { Image } from 'astro:assets';
+import typography from '@tailwindcss/typography';
 
-import BaseLayout from '../layout/BaseLayout.astro'
+import BaseLayout from "../layout/BaseLayout.astro"
 
-import VideoModal from '../components/Videomodal.jsx'
-import Videobox from '../components/Videobox.astro'
+import RichTextRenderer from "../components/RichRenderer"
 
-const serverUrl = import.meta.env.NEXT_PUBLIC_SERVER_URL;
-
-const [videoResponse, musicResponse] = await Promise.all([
-  fetch(`${serverUrl}api/videos?limit=1000&sort=priority`),
-  fetch(`${serverUrl}api/music?limit=1000&sort=priority`)
-]);
-
-let videosIdAndDescription = [] as any[]
-
-if (videoResponse.ok) {
-  const data = await videoResponse.json();
-  const videos = data.docs as any[];
-
-  const youtubeUrlRegexp = /(?:watch\?v=|youtu\.be\/|\/(?:embed|shorts|live)\/)([a-zA-Z0-9_-]{11})/
-  videosIdAndDescription = videos
-    .map(({ videoUrl, description, priority, thumbnailUrl }) => {
-        const result = videoUrl.match(youtubeUrlRegexp)
-        return result ? { videoId: result[1], description, priority: parseInt(priority),
-            thumbnailUrl } : null
-      })
-    .filter(_ => _ != null);
+let contentBlocks: any[] = [];
+const response = await fetch(`${import.meta.env.NEXT_PUBLIC_SERVER_URL}/api/globals/home`);
+if (response.ok) {
+  const pageData = await response.json();
+  contentBlocks = pageData.content;
 } else {
-  console.error("Failed to fetch videos from API:", videoResponse.status,
-      videoResponse.statusText);
+  console.error('Failed to fetch content from Payload.')
 }
 
-let musicIdAndDescription = [] as any[]
-
-if (musicResponse.ok) {
-  const data = await musicResponse.json();
-  const videos = data.docs as any[];
-
-  const youtubeUrlRegexp = /(?:watch\?v=|youtu\.be\/|\/(?:embed|shorts|live)\/)([a-zA-Z0-9_-]{11})/
-  musicIdAndDescription = videos
-    .map(({ videoUrl, description, priority, thumbnailUrl }) => {
-        const result = videoUrl.match(youtubeUrlRegexp)
-        return result ? { videoId: result[1], description, priority: parseInt(priority),
-          thumbnailUrl } : null
-      })
-    .filter(_ => _ != null);
-} else {
-  console.error("Failed to fetch music from API:", musicResponse.status,
-      musicResponse.statusText);
-}
-
-const allIdAndDescription = musicIdAndDescription
-    .concat(videosIdAndDescription)
-    .sort((a, b) => a.priority - b.priority)
-
+const alignmentClasses = {
+  left: 'mr-auto',
+  center: 'mx-auto',
+  right: 'ml-auto',
+};
 ---
 
-<BaseLayout title="David J. Barrios">
-  <!-- <h2 class="font-display font-light tracking-[0.15em] mb-23">Seleccionar proyecto</h2> -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-15" id="video-gallery">
-    {allIdAndDescription.map(({ videoId, description, thumbnailUrl }) => (
-      <Videobox
-        id={videoId}
-        thumbnailUrl={thumbnailUrl === '' ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : thumbnailUrl}
-        description={description}
-        fallbackThumbnailUrl={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
-      />
-    ))}
+<BaseLayout title="Sobre mí — David J. Barrios">
+
+  <div
+    class="prose-invert lg:prose-xl max-w-none prose-a:text-red-200
+      prose-a:hover:text-red-100 prose-il:text-red-500
+      prose-ul:list-disc prose-ul:pl-6
+      prose-ol:list-decimal prose-ol:pl-6
+      prose-li:marker:text-slate-400
+      prose-blockquote:border-l-4
+      prose-blockquote:border-slate-500
+      prose-blockquote:pl-6
+      prose-blockquote:italic
+      prose-blockquote:text-slate-400
+      prose-blockquote:not-prose"
+  >
+    {contentBlocks && contentBlocks.length > 0 ? (
+      contentBlocks.map(block => {
+        if (block.blockType === 'richTextBlock') {
+          return <RichTextRenderer data={block.richText} client:load />;
+        }
+        
+        if (block.blockType === 'imageBlock') {
+          const alignmentClass = alignmentClasses[block.alignment] ?? alignmentClasses.center;
+
+          return (
+            <figure class:list={["w-fit my-8", alignmentClass]}>
+              <img 
+                src={block.imageUrl} 
+                alt={block.altText}
+                width={block.imageDimensions.width > 0 ? block.imageDimensions.width : undefined}
+                height={block.imageDimensions.height > 0 ? block.imageDimensions.height : undefined}
+                class="rounded-lg shadow-lg"
+              />
+              <figcaption class="text-center text-sm text-slate-400 mt-2">
+                {block.altText}
+              </figcaption>
+            </figure>
+          )
+        }
+
+        if (block.blockType === 'textWithImageBlock') {
+          const flexClass = block.alignment === 'right' ? 'md:flex-row-reverse' : 'md:flex-row';
+
+          return (
+            <div class:list={["flex flex-col w-full md:flex-row my-4 items-center", flexClass]}>
+              
+              <div class="w-full md:max-w-3/4 shrink-0">
+                {block.imageUrl && (
+                  <figure>
+                    <Image
+                      src={block.imageUrl}
+                      width={block.imageDimensions.width}
+                      height={block.imageDimensions.height}
+                      alt={block.altText}
+                      class="rounded-lg shadow-lg w-full h-auto"
+                    />
+                    <figcaption class="text-center text-sm text-slate-400 mt-2">
+                      {block.altText}
+                    </figcaption>
+                  </figure>
+                )}
+              </div>
+
+              <div class="shrink max-w-3/4 min-w-1/4 p-2">
+                <RichTextRenderer data={block.richText} client:load />
+              </div>
+            </div>
+          );
+        }
+
+        if (block.blockType === 'textWithVideo') {
+          const flexClass = block.videoAlignment === 'right' ? 'md:flex-row-reverse' : 'md:flex-row';
+
+          const youtubeUrlRegexp = /(?:watch\?v=|youtu\.be\/|\/(embed|shorts|live)\/)([a-zA-Z0-9_-]{11})/
+          const result = block.videoUrl.match(youtubeUrlRegexp)
+          
+          if (result) {
+            const VIDEO_ID = result[2]
+            const IS_SHORT = result[1]
+            
+            const dimensionsClass = IS_SHORT ? 'aspect-9/16' : 'aspect-video'
+
+            return (
+              <div class:list={["flex flex-col w-full md:flex-row my-4 items-center", flexClass]}>
+                
+                <div class="w-full md:max-w-3/4 shrink-0" style={IS_SHORT ? `max-width: ${block.shortScale}%` : ''}>
+                  {block.videoUrl && (
+                    <div class:list={["relative w-full", dimensionsClass] }>
+                      <iframe
+                        // width="700"
+                        // height="500"
+                        // width={(315 * (block.shortScale / 100)).toString()}
+                        // height={(560  * (block.shortScale / 100)).toString()}
+                        class="border-0 shadow-lg w-full h-full"
+                        src={`https://www.youtube.com/embed/${VIDEO_ID}`}
+                        title="YouTube video player"
+                        allow="fullscreen accelerometer clipboard-write; encrypted-media; gyroscope;
+                          picture-in-picture; web-share"
+                      ></iframe>
+                    </div>
+                  )}
+                </div>
+  
+                <div class="w-full min-w-0 md:max-w-3/4">
+                  <RichTextRenderer data={block.description} client:load />
+                </div>
+              </div>
+            );
+            
+          } else {
+            console.error('Could not parse video URL ' + block.videoUrl)
+          }
+
+        }
+
+        return null;
+      })
+    ) : (
+      <p>Error de recepción de contenido.</p>
+    )}
   </div>
 
-  <VideoModal client:load listenOnId="video-gallery"/>
 </BaseLayout>

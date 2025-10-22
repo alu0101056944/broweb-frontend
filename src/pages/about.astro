@@ -51,8 +51,8 @@ const alignmentClasses = {
               <img 
                 src={block.imageUrl} 
                 alt={block.altText}
-                width={block.width > 0 ? block.width : undefined}
-                height={block.height > 0 ? block.height : undefined}
+                width={block.imageDimensions.width > 0 ? block.imageDimensions.width : undefined}
+                height={block.imageDimensions.height > 0 ? block.imageDimensions.height : undefined}
                 class="rounded-lg shadow-lg"
               />
               <figcaption class="text-center text-sm text-slate-400 mt-2">
@@ -72,8 +72,8 @@ const alignmentClasses = {
                 <figure class="flex flex-col items-center text-center p-5 max-w-3/4">
                   <Image
                     src={block.imageUrl}
-                    width={block.width}
-                    height={block.height}
+                    width={block.imageDimensions.width}
+                    height={block.imageDimensions.height}
                     alt={block.altText}
                     class="rounded-lg shadow-lg"
                   />
