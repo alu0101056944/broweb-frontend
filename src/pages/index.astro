@@ -279,7 +279,7 @@ const getYouTubeId = (url: string): string | null => {
         }
         
         if (block.blockType === 'textWithHTML') {
-          const flexClass = block.videoAlignment === 'right' ? 'md:flex-row-reverse' : 'md:flex-row';
+          const flexClass = block.htmlAlignment === 'right' ? 'md:flex-row-reverse' : 'md:flex-row';
 
             const textWidth = block.horizontalTextSpace ?? 75; // Default to 75%
             const htmlWidth = 100 - textWidth;
@@ -298,9 +298,9 @@ const getYouTubeId = (url: string): string | null => {
             }
 
             return (
-              <div class:list={["flex flex-col md:flex-row my-8 gap-8 items-center", flexClass]}>
+              <div class:list={["flex my-8 gap-8 items-center", flexClass]}>
                 <div 
-                  class="flex-shrink-0"
+                  class:list={["flex-shrink-0"]}
                   style={`flex-basis: ${htmlWidth}%;`}
                 >
                   <div class:list={[htmlWrapperClasses]} style={htmlContainerStyles}>
