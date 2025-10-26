@@ -20,10 +20,15 @@ const alignmentClasses = {
   center: 'mx-auto',
   right: 'ml-auto',
 };
+
+const paddingJustifyClasses = {
+  left: 'justify-start',
+  center: 'justify-center',
+  right: 'justify-end',
+}
 ---
 
 <BaseLayout title="Sobre mí — David J. Barrios">
-
   <div
     class="prose-invert lg:prose-xl max-w-none prose-a:text-red-200
       prose-a:hover:text-red-100 prose-il:text-red-500
@@ -65,29 +70,116 @@ const alignmentClasses = {
         if (block.blockType === 'textWithImageBlock') {
           const flexClass = block.alignment === 'right' ? 'md:flex-row-reverse' : 'md:flex-row';
 
-          return (
-            <div class:list={["flex flex-col w-full md:flex-row my-4 items-center", flexClass]}>
-              
-              {block.imageUrl && (
-                <figure class="flex flex-col items-center text-center p-5 max-w-3/4">
-                  <Image
-                    src={block.imageUrl}
-                    width={block.imageDimensions.width}
-                    height={block.imageDimensions.height}
-                    alt={block.altText}
-                    class="rounded-lg shadow-lg"
-                  />
-                  <figcaption class="text-center text-sm text-slate-400 mt-2">
-                    {block.altText}
-                  </figcaption>
-                </figure>
-              )}
+          const textWidth = block.horizontalTextSpace ?? 75;
+          const imageWidth = 100 - textWidth;
 
-              <div class="shrink max-w-3/4 min-w-1/4 p-2">
+          let imageContainerStyles = '';
+          let imageWrapperClasses = 'flex w-full';
+
+          if (block.usePercentageBasedPadding) {
+            const paddingValue = block.percentageImagePadding ?? 0;
+            if (block.alignment === 'left') {
+              imageContainerStyles = `padding-right: ${paddingValue}%;`;
+            } else {
+              imageContainerStyles = `padding-left: ${paddingValue}%;`;
+            }
+          } else {
+            imageWrapperClasses += ` ${paddingJustifyClasses[block.imagePadding] ?? 'justify-center'}`;
+          }
+
+          return (
+            <div class:list={["flex flex-col md:flex-row my-8 gap-8 items-center", flexClass]}>
+              
+              <div 
+                class="flex-shrink-0"
+                style={`flex-basis: ${imageWidth}%;`}
+              >
+                <div class:list={[imageWrapperClasses]} style={imageContainerStyles}>
+                  <figure class="w-full">
+                    <Image
+                      src={block.imageUrl}
+                      width={block.imageDimensions.width}
+                      height={block.imageDimensions.height}
+                      alt={block.altText}
+                      class="rounded-lg shadow-lg w-full h-auto"
+                      loading="lazy"
+                    />
+                    <figcaption class="text-center text-sm text-slate-400 mt-2">
+                      {block.altText}
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+
+              <div 
+                class="flex-shrink"
+                style={`flex-basis: ${textWidth}%;`}
+              >
                 <RichTextRenderer data={block.richText} client:load />
               </div>
             </div>
           );
+        }
+
+        if (block.blockType === 'textWithVideo') {
+          const flexClass = block.videoAlignment === 'right' ? 'md:flex-row-reverse' : 'md:flex-row';
+
+          const youtubeUrlRegexp = /(?:watch\?v=|youtu\.be\/|\/(embed|shorts|live)\/)([a-zA-Z0-9_-]{11})/;
+          const result = block.videoUrl.match(youtubeUrlRegexp);
+          
+          if (result) {
+            const VIDEO_ID = result[2];
+            const IS_SHORT = block.videoUrl.includes('/shorts/');
+            const dimensionsClass = IS_SHORT ? 'aspect-[9/16]' : 'aspect-video';
+            
+            const textWidth = block.horizontalTextSpace ?? 75; // Default to 75%
+            const videoWidth = 100 - textWidth;
+
+            let videoContainerStyles = '';
+            let videoWrapperClasses = 'flex w-full';
+            if (block.usePercentageBasedPadding) {
+                const paddingValue = block.percentageVideoPadding ?? 0;
+                if (block.videoAlignment === 'left') {
+                    videoContainerStyles = `padding-right: ${paddingValue}%;`;
+                } else {
+                    videoContainerStyles = `padding-left: ${paddingValue}%;`;
+                }
+            } else {
+                videoWrapperClasses += ` ${paddingJustifyClasses[block.videoPadding] ?? 'justify-center'}`;
+            }
+
+            return (
+              <div class:list={["flex flex-col md:flex-row my-8 gap-8 items-center", flexClass]}>
+                <div 
+                  class="flex-shrink-0"
+                  style={`flex-basis: ${videoWidth}%;`}
+                >
+                  <div class:list={[videoWrapperClasses]} style={videoContainerStyles}>
+                    <div class:list={["relative w-full", dimensionsClass]}>
+                      <iframe
+                        class="absolute top-0 left-0 border-0 shadow-lg w-full h-full rounded-lg"
+                        src={`https://www.youtube.com/embed/${VIDEO_ID}`}
+                        title="YouTube video player"
+                        allow="fullscreen; accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        loading="lazy"
+                      ></iframe>
+                    </div>
+                  </div>
+                </div>
+  
+                <div 
+                  class="flex-shrink"
+                  style={`flex-basis: ${textWidth}%;`}
+                >
+                  <RichTextRenderer data={block.description} client:load />
+                </div>
+              </div>
+            );
+            
+          } else {
+            console.error('Could not parse video URL ' + block.videoUrl)
+          }
+
         }
 
         return null;
