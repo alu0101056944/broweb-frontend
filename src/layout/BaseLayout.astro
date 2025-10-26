@@ -19,6 +19,7 @@ const { title } = Astro.props
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
+    <meta name="referrer" content="strict-origin-when-cross-origin">
 		<title>{title}</title>
 	</head>
 	<body
@@ -41,6 +42,12 @@ const { title } = Astro.props
       <div class="max-w-6xl mx-auto px-4 py-8">
         <slot/>
         <VideoModal client:load listenOnId="video-gallery"/>
+        <script
+          type="text/javascript"
+          src="https://platform.linkedin.com/badges/js/profile.js"
+          async defer
+        >
+        </script>
       </div>
     </main>
 	</body>

@@ -168,7 +168,7 @@ const getYouTubeId = (url: string): string | null => {
             return (
               <div class:list={["flex flex-col md:flex-row my-8 gap-8 items-center", flexClass]}>
                 <div 
-                  class="flex-shrink-0"
+                  class="w-full flex-shrink-0"
                   style={`flex-basis: ${videoWidth}%;`}
                 >
                   <div class:list={[videoWrapperClasses]} style={videoContainerStyles}>
@@ -177,7 +177,8 @@ const getYouTubeId = (url: string): string | null => {
                         class="absolute top-0 left-0 border-0 shadow-lg w-full h-full rounded-lg"
                         src={`https://www.youtube.com/embed/${VIDEO_ID}`}
                         title="YouTube video player"
-                        allow="fullscreen; accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allow="fullscreen; accelerometer; clipboard-write; encrypted-media;
+                          gyroscope; picture-in-picture; web-share"
                         loading="lazy"
                       ></iframe>
                     </div>
@@ -271,6 +272,52 @@ const getYouTubeId = (url: string): string | null => {
               </figure>
             </div>
           )
+        }
+
+        if (block.blockType === 'htmlBlock') {
+          return <div set:html={block.htmlContent} />;
+        }
+        
+        if (block.blockType === 'textWithHTML') {
+          const flexClass = block.videoAlignment === 'right' ? 'md:flex-row-reverse' : 'md:flex-row';
+
+            const textWidth = block.horizontalTextSpace ?? 75; // Default to 75%
+            const htmlWidth = 100 - textWidth;
+
+            let htmlContainerStyles = '';
+            let htmlWrapperClasses = 'flex w-full';
+            if (block.usePercentageBasedPadding) {
+                const paddingValue = block.percentagehtmlPadding ?? 0;
+                if (block.htmlAlignment === 'left') {
+                    htmlContainerStyles = `padding-right: ${paddingValue}%;`;
+                } else {
+                    htmlContainerStyles = `padding-left: ${paddingValue}%;`;
+                }
+            } else {
+                htmlWrapperClasses += ` ${paddingJustifyClasses[block.htmlPadding] ?? 'justify-center'}`;
+            }
+
+            return (
+              <div class:list={["flex flex-col md:flex-row my-8 gap-8 items-center", flexClass]}>
+                <div 
+                  class="flex-shrink-0"
+                  style={`flex-basis: ${htmlWidth}%;`}
+                >
+                  <div class:list={[htmlWrapperClasses]} style={htmlContainerStyles}>
+                    <div class:list={["relative w-full"]}>
+                      <div set:html={block.htmlContent} />
+                    </div>
+                  </div>
+                </div>
+  
+                <div 
+                  class="flex-shrink"
+                  style={`flex-basis: ${textWidth}%;`}
+                >
+                  <RichTextRenderer data={block.description} client:load />
+                </div>
+              </div>
+            )
         }
 
         return null;
