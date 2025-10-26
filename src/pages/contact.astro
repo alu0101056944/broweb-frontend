@@ -6,11 +6,13 @@ import BaseLayout from "../layout/BaseLayout.astro"
 
 import RichTextRenderer from "../components/RichRenderer"
 
+import Videobox from '../components/Videobox.astro'
+
 const serverUrl = import.meta.env.NEXT_PUBLIC_SERVER_URL;
 
 const [contentResponse, infoResponse] = await Promise.all([
-  fetch(`${serverUrl}/api/globals/contact-content`),
-  fetch(`${serverUrl}/api/globals/contact-info`)
+  fetch(`${serverUrl}/api/globals/contact-content?depth=2`),
+  fetch(`${serverUrl}/api/globals/contact-info?depth=2`)
 ]);
 
 let contentBlocks: any[] = [];
@@ -40,6 +42,18 @@ const paddingJustifyClasses = {
   center: 'justify-center',
   right: 'justify-end',
 }
+
+const columnClasses = {
+  '2': 'lg:grid-cols-2',
+  '3': 'lg:grid-cols-3',
+  '4': 'lg:grid-cols-4',
+};
+
+const getYouTubeId = (url: string): string | null => {
+  const youtubeUrlRegexp = /(?:watch\?v=|youtu\.be\/|\/(?:embed|shorts|live)\/)([a-zA-Z0-9_-]{11})/;
+  const match = url.match(youtubeUrlRegexp);
+  return match ? match[1] : null;
+};
 ---
 
 <BaseLayout title="Contacto — David J. Barrios">
@@ -75,9 +89,11 @@ const paddingJustifyClasses = {
                 height={block.imageDimensions.height > 0 ? block.imageDimensions.height : undefined}
                 class="rounded-lg shadow-lg"
               />
-              <figcaption class="text-center text-sm text-slate-400 mt-2">
-                {block.altText}
-              </figcaption>
+              {block.altText && (
+                <figcaption class="text-center text-sm text-slate-400 mt-2">
+                  {block.altText}
+                </figcaption>
+              )}
             </figure>
           )
         }
@@ -195,6 +211,81 @@ const paddingJustifyClasses = {
             console.error('Could not parse video URL ' + block.videoUrl)
           }
 
+        }
+
+
+        if (block.blockType === 'mediaGrid') {
+          const gridClass = columnClasses[block.columns || '3'];
+          const validMediaItems = block
+            .mediaItems
+            ?.filter(item => typeof item.value === 'object' && item.value !== null) || [];
+
+            return (
+              <div class="my-12" id="video-gallery">
+                {block.title && <h2 class="text-2xl font-bold mb-8 text-center">{block.title}</h2>}
+
+                <div
+                  class={`grid grid-cols-1 sm:grid-cols-2 ${gridClass} gap-x-3 gap-y-15`}
+                  id={`media-grid-${block.id}`}
+                >
+                  {validMediaItems.map(({ value: item }) => {
+                    const videoId = getYouTubeId(item.videoUrl);
+                    if (!videoId) return null;
+
+                    const thumbnailUrl = item.thumbnailUrl && item.thumbnailUrl !== ''
+                      ? item.thumbnailUrl
+                      : `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+                    
+                    const fallbackThumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+
+                    return (
+                      <Videobox
+                        id={videoId}
+                        thumbnailUrl={thumbnailUrl}
+                        description={item.description}
+                        fallbackThumbnailUrl={fallbackThumbnailUrl}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            )
+        }
+
+        if (block.blockType === 'videoBlock') {
+          const videoId = getYouTubeId(block.videoUrl);
+          if (!videoId) return null;
+
+          let alignment = '';
+          if (block.alignment === 'center') {
+            alignment = 'mx-auto'
+          } else if (block.alignment === 'left') {
+            alignment = ''
+          } else if (block.alignment === 'right') {
+            alignment = 'flex-row-reverse'
+          }
+
+          return (
+            <div class:list={["my-8 flex mx-max", alignment]}>
+              <figure class:list={["w-full max-w-4xl", alignment]}>
+                <div class="relative w-full aspect-video bg-black rounded-lg overflow-hidden shadow-lg">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${videoId}`}
+                    title="YouTube video player"
+                    allow="fullscreen; accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen
+                    class="w-full h-full border-0"
+                    loading="lazy"
+                  ></iframe>
+                </div>
+                {block.caption && (
+                  <figcaption class="mt-2 text-center text-sm text-slate-400">
+                    {block.caption}
+                  </figcaption>
+                )}
+              </figure>
+            </div>
+          )
         }
 
         return null;

@@ -13,12 +13,12 @@ export default function VideoModal({ listenOnId }) {
       }
     };
 
-    const gallery = document.getElementById(listenOnId);
-    gallery.addEventListener('click', handleGalleryClick);
+    const gallery = document.querySelectorAll(`#${listenOnId}`)
+      .forEach(node => node.addEventListener('click', handleGalleryClick));
 
     // Cleanup: remove the listener when the component is unmounted
     return () => {
-      gallery.removeEventListener('click', handleGalleryClick);
+      gallery.forEach(node => node.removeEventListener('click', handleGalleryClick));
     };
   }, [listenOnId]);
 

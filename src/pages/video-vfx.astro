@@ -2,7 +2,6 @@
 
 import BaseLayout from '../layout/BaseLayout.astro'
 
-import VideoModal from '../components/Videomodal.jsx'
 import Videobox from '../components/Videobox.astro'
 
 const serverUrl = import.meta.env.NEXT_PUBLIC_SERVER_URL;
@@ -54,6 +53,4 @@ if (response.ok) {
       />
     ))}
   </div>
-
-  <VideoModal client:load listenOnId="video-gallery"/>
 </BaseLayout>
