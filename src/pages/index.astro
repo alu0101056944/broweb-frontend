@@ -35,10 +35,29 @@ const columnClasses = {
   '4': 'lg:grid-cols-4',
 };
 
-const getYouTubeId = (url: string): string | null => {
+const getVideoData = (url: string) => {
   const youtubeUrlRegexp = /(?:watch\?v=|youtu\.be\/|\/(?:embed|shorts|live)\/)([a-zA-Z0-9_-]{11})/;
-  const match = url.match(youtubeUrlRegexp);
-  return match ? match[1] : null;
+  const vimeoUrlRegexp = /(?:vimeo\.com\/|player\.vimeo\.com\/video\/)([0-9]+)/;
+
+  const ytMatch = url.match(youtubeUrlRegexp);
+  if (ytMatch) {
+    return {
+      id: ytMatch[1],
+      provider: 'youtube',
+      isShort: url.includes('/shorts/')
+    };
+  }
+
+  const vimeoMatch = url.match(vimeoUrlRegexp);
+  if (vimeoMatch) {
+    return {
+      id: vimeoMatch[1],
+      provider: 'vimeo',
+      isShort: false // Vimeo URLs don't explicitly indicate vertical/shorts in the URL structure
+    };
+  }
+
+  return null;
 };
 ---
 
@@ -141,15 +160,18 @@ const getYouTubeId = (url: string): string | null => {
         if (block.blockType === 'textWithVideo') {
           const flexClass = block.videoAlignment === 'right' ? 'md:flex-row-reverse' : 'md:flex-row';
 
-          const youtubeUrlRegexp = /(?:watch\?v=|youtu\.be\/|\/(embed|shorts|live)\/)([a-zA-Z0-9_-]{11})/;
-          const result = block.videoUrl.match(youtubeUrlRegexp);
+          const videoData = getVideoData(block.videoUrl);
           
-          if (result) {
-            const VIDEO_ID = result[2];
-            const IS_SHORT = block.videoUrl.includes('/shorts/');
-            const dimensionsClass = IS_SHORT ? 'aspect-[9/16]' : 'aspect-video';
+          if (videoData) {
+            const { id: VIDEO_ID, provider, isShort } = videoData;
             
-            const textWidth = block.horizontalTextSpace ?? 75; // Default to 75%
+            const embedSrc = provider === 'youtube' 
+              ? `https://www.youtube.com/embed/${VIDEO_ID}` 
+              : `https://player.vimeo.com/video/${VIDEO_ID}`;
+
+            const dimensionsClass = isShort ? 'aspect-[9/16]' : 'aspect-video';
+            
+            const textWidth = block.horizontalTextSpace ?? 75; 
             const videoWidth = 100 - textWidth;
 
             let videoContainerStyles = '';
@@ -175,8 +197,8 @@ const getYouTubeId = (url: string): string | null => {
                     <div class:list={["relative w-full", dimensionsClass]}>
                       <iframe
                         class="absolute top-0 left-0 border-0 shadow-lg w-full h-full rounded-lg"
-                        src={`https://www.youtube.com/embed/${VIDEO_ID}`}
-                        title="YouTube video player"
+                        src={embedSrc}
+                        title={`${provider === 'youtube' ? 'YouTube' : 'Vimeo'} video player`}
                         allow="fullscreen; accelerometer; clipboard-write; encrypted-media;
                           gyroscope; picture-in-picture; web-share"
                         loading="lazy"
@@ -215,14 +237,29 @@ const getYouTubeId = (url: string): string | null => {
                   id={`media-grid-${block.id}`}
                 >
                   {validMediaItems.map(({ value: item }) => {
-                    const videoId = getYouTubeId(item.videoUrl);
-                    if (!videoId) return null;
+                    // Updated Parsing Logic
+                    const videoData = getVideoData(item.videoUrl);
+                    if (!videoData) return null;
 
-                    const thumbnailUrl = item.thumbnailUrl && item.thumbnailUrl !== ''
-                      ? item.thumbnailUrl
-                      : `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
-                    
-                    const fallbackThumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+                    const { id: videoId, provider } = videoData;
+
+                    // Vimeo does not offer a thumbnail URL like youTube
+                    let thumbnailUrl = item.thumbnailUrl;
+                    let fallbackThumbnailUrl = 'https://media.istockphoto.com/id/1222357475/es/vector/icono-de-vista-previa-de-imagen-marcador-de-posici%C3%B3n-de-imagen-para-el-sitio-web-o-el-dise%C3%B1o.webp?s=2048x2048&w=is&k=20&c=YvKjw7jovw82P-nx8T_k5eCgn902VoO1vVpvRmwoe50=';
+
+                    if (provider === 'youtube') {
+                        if (!thumbnailUrl || thumbnailUrl === '') {
+                             thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+                        }
+                        fallbackThumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+                    }
+
+                    if (provider === 'vimeo') {
+                        if (!thumbnailUrl || thumbnailUrl === '') {
+                             thumbnailUrl = `https://media.istockphoto.com/id/1222357475/es/vector/icono-de-vista-previa-de-imagen-marcador-de-posici%C3%B3n-de-imagen-para-el-sitio-web-o-el-dise%C3%B1o.webp?s=2048x2048&w=is&k=20&c=YvKjw7jovw82P-nx8T_k5eCgn902VoO1vVpvRmwoe50=`;
+                        }
+                        fallbackThumbnailUrl = `https://media.istockphoto.com/id/1222357475/es/vector/icono-de-vista-previa-de-imagen-marcador-de-posici%C3%B3n-de-imagen-para-el-sitio-web-o-el-dise%C3%B1o.webp?s=2048x2048&w=is&k=20&c=YvKjw7jovw82P-nx8T_k5eCgn902VoO1vVpvRmwoe50=`;
+                    }
 
                     return (
                       <Videobox
@@ -230,6 +267,7 @@ const getYouTubeId = (url: string): string | null => {
                         thumbnailUrl={thumbnailUrl}
                         description={item.description}
                         fallbackThumbnailUrl={fallbackThumbnailUrl}
+                        provider={provider}
                       />
                     );
                   })}
@@ -239,8 +277,14 @@ const getYouTubeId = (url: string): string | null => {
         }
 
         if (block.blockType === 'videoBlock') {
-          const videoId = getYouTubeId(block.videoUrl);
-          if (!videoId) return null;
+          const videoData = getVideoData(block.videoUrl);
+          if (!videoData) return null;
+          
+          const { id: videoId, provider } = videoData;
+
+          const embedSrc = provider === 'youtube' 
+              ? `https://www.youtube.com/embed/${videoId}` 
+              : `https://player.vimeo.com/video/${videoId}`;
 
           let alignment = '';
           if (block.alignment === 'center') {
@@ -256,8 +300,8 @@ const getYouTubeId = (url: string): string | null => {
               <figure class:list={["w-full max-w-4xl", alignment]}>
                 <div class="relative w-full aspect-video bg-black rounded-lg overflow-hidden shadow-lg">
                   <iframe
-                    src={`https://www.youtube.com/embed/${videoId}`}
-                    title="YouTube video player"
+                    src={embedSrc}
+                    title={`${provider === 'youtube' ? 'YouTube' : 'Vimeo'} video player`}
                     allow="fullscreen; accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowfullscreen
                     class="w-full h-full border-0"
@@ -281,43 +325,42 @@ const getYouTubeId = (url: string): string | null => {
         if (block.blockType === 'textWithHTML') {
           const flexClass = block.htmlAlignment === 'right' ? 'md:flex-row-reverse' : 'md:flex-row';
 
-            const textWidth = block.horizontalTextSpace ?? 75; // Default to 75%
-            const htmlWidth = 100 - textWidth;
+          const textWidth = block.horizontalTextSpace ?? 75; // Default to 75%
+          const htmlWidth = 100 - textWidth;
 
-            let htmlContainerStyles = '';
-            let htmlWrapperClasses = 'flex w-full';
-            if (block.usePercentageBasedPadding) {
-                const paddingValue = block.percentagehtmlPadding ?? 0;
-                if (block.htmlAlignment === 'left') {
-                    htmlContainerStyles = `padding-right: ${paddingValue}%;`;
-                } else {
-                    htmlContainerStyles = `padding-left: ${paddingValue}%;`;
-                }
-            } else {
-                htmlWrapperClasses += ` ${paddingJustifyClasses[block.htmlPadding] ?? 'justify-center'}`;
-            }
+          let htmlContainerStyles = '';
+          let htmlWrapperClasses = 'flex w-full';
+          if (block.usePercentageBasedPadding) {
+              const paddingValue = block.percentagehtmlPadding ?? 0;
+              if (block.htmlAlignment === 'left') {
+                  htmlContainerStyles = `padding-right: ${paddingValue}%;`;
+              } else {
+                  htmlContainerStyles = `padding-left: ${paddingValue}%;`;
+              }
+          } else {
+              htmlWrapperClasses += ` ${paddingJustifyClasses[block.htmlPadding] ?? 'justify-center'}`;
+          }
 
-            return (
-              <div class:list={["flex my-8 gap-8 items-center", flexClass]}>
-                <div 
-                  class:list={["flex-shrink-0"]}
-                  style={`flex-basis: ${htmlWidth}%;`}
-                >
-                  <div class:list={[htmlWrapperClasses]} style={htmlContainerStyles}>
-                    <div class:list={["relative w-full"]}>
-                      <div set:html={block.htmlContent} />
-                    </div>
+          return (
+            <div class:list={["flex my-8 gap-8 items-center", flexClass]}>
+              <div 
+                class:list={["flex-shrink-0"]}
+                style={`flex-basis: ${htmlWidth}%;`}
+              >
+                <div class:list={[htmlWrapperClasses]} style={htmlContainerStyles}>
+                  <div class:list={["relative w-full"]}>
+                    <div set:html={block.htmlContent} />
                   </div>
                 </div>
-  
-                <div 
-                  class="flex-shrink"
-                  style={`flex-basis: ${textWidth}%;`}
-                >
-                  <RichTextRenderer data={block.description} client:load />
-                </div>
               </div>
-            )
+
+              <div 
+                style={`flex-basis: ${textWidth}%;`}
+              >
+                <RichTextRenderer data={block.description} client:load />
+              </div>
+            </div>
+          )
         }
 
         return null;

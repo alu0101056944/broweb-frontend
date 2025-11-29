@@ -6,9 +6,16 @@ export interface Props {
   thumbnailUrl: string;
   description: string;
   fallbackThumbnailUrl: string;
+  provider?: string;
 }
 
-const { id, thumbnailUrl, description, fallbackThumbnailUrl } = Astro.props
+const {
+  id, 
+  thumbnailUrl, 
+  description, 
+  fallbackThumbnailUrl,
+  provider = 'youtube'
+} = Astro.props
 ---
 
 <article
@@ -17,6 +24,7 @@ const { id, thumbnailUrl, description, fallbackThumbnailUrl } = Astro.props
     hover:border-gray-700"
   data-trigger="play-video"
   data-videoid={id}
+  data-provider={provider}
 >
   <Image
     id={`thumbnail-${id}`}
@@ -38,26 +46,28 @@ const { id, thumbnailUrl, description, fallbackThumbnailUrl } = Astro.props
 </article>
 
 <script define:vars={{ id, fallbackThumbnailUrl }}>
-  const imgElement = document.getElementById(`thumbnail-${id}`);
+  if (fallbackThumbnailUrl) {
+    const imgElement = document.getElementById(`thumbnail-${id}`);
 
-  if (imgElement) {
-    const handleLoad = () => {
-    
-      // Default youtube thumbnail dimensions
-      if (imgElement.naturalWidth <= 120 && imgElement.naturalHeight <= 90) {
-        imgElement.src = fallbackThumbnailUrl;
-        imgElement.srcset = ''; // Force browser to fetch new image
-        console.log(`Fallback to low quality thumbnail for video ${id}; hq not found.`);
+    if (imgElement) {
+      const handleLoad = () => {
+      
+        // Default youtube thumbnail dimensions
+        if (imgElement.naturalWidth <= 120 && imgElement.naturalHeight <= 90) {
+          imgElement.src = fallbackThumbnailUrl;
+          imgElement.srcset = ''; // Force browser to fetch new image
+          console.log(`Fallback to low quality thumbnail for video ${id}; hq not found.`);
+        }
+        imgElement.removeEventListener('load', handleLoad);
+      };
+
+      imgElement.addEventListener('load', handleLoad);
+
+      // In case the image is already loaded from the browser cache,
+      // the 'load' event might not fire. This handles that edge case.
+      if (imgElement.complete && imgElement.naturalWidth > 0) {
+        handleLoad();
       }
-      imgElement.removeEventListener('load', handleLoad);
-    };
-
-    imgElement.addEventListener('load', handleLoad);
-
-    // In case the image is already loaded from the browser cache,
-    // the 'load' event might not fire. This handles that edge case.
-    if (imgElement.complete && imgElement.naturalWidth > 0) {
-      handleLoad();
     }
   }
 </script>
