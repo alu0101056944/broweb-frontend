@@ -3,8 +3,19 @@
 import BaseLayout from "../layout/BaseLayout.astro"
 import BlockPage from "../components/BlockPage.astro"
 
+const SERVER_URL = import.meta.env.NEXT_PUBLIC_SERVER_URL;
+
+let contentBlocks : any[] = [];
+const response = await fetch(`${SERVER_URL}api/globals/about-content?depth=2`);
+if (response.ok) {
+  const pageData = await response.json();
+  contentBlocks = pageData.content;
+} else {
+  console.error('Failed to fetch content from payload.')
+}
+
 ---
 
 <BaseLayout title="About — David J. Barrios">
-  <BlockPage collectionName="about-content"/>
+  <BlockPage contentBlocks={contentBlocks}/>
 </BaseLayout>

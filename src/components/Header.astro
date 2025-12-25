@@ -3,6 +3,20 @@
 
 const { pathname } = Astro.url;
 
+const SERVER_URL = import.meta.env.NEXT_PUBLIC_SERVER_URL;
+const pagesRequest = await fetch(`${SERVER_URL}api/pages?limit=100`);
+let pagesTitleAndName : { pageName: string; pageTitle: string; }[]= [];
+
+if (pagesRequest.ok) {
+  const pagesData = await pagesRequest.json();
+  pagesTitleAndName = pagesData.docs.map((p: any) => ({
+    pageName: p.pageName,
+    pageTitle: p.pageTitle
+  }));
+} else {
+  console.error('Failed to fetch payload pages for the header menu links.')
+}
+
 function isActive(href: string) {
   if (href === '/') {
     return pathname === '/';
@@ -62,7 +76,18 @@ const activeClasses = "text-white"
     >
       Contact
     </a>
+    {pagesTitleAndName && pagesTitleAndName.map(({ pageName, pageTitle }) => {
+      return (
+        <a
+          href={`/${pageName}`}
+          class:list={[
+            baseClasses,
+            { [activeClasses]: isActive(`/${pageName}`) }
+          ]}
+        >
+          {`${pageTitle}`}
+        </a>
+      )
+    })}
   </nav>
 </div>
-
-

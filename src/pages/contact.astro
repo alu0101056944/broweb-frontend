@@ -2,10 +2,18 @@
 import BaseLayout from "../layout/BaseLayout.astro"
 import BlockPage from "../components/BlockPage.astro"
 
-const serverUrl = import.meta.env.NEXT_PUBLIC_SERVER_URL;
+const SERVER_URL = import.meta.env.NEXT_PUBLIC_SERVER_URL;
 
-const infoResponse = await fetch(`${serverUrl}/api/globals/contact-info`)
+let contentBlocks : any[] = [];
+const response = await fetch(`${SERVER_URL}api/globals/contact-content?depth=2`);
+if (response.ok) {
+  const pageData = await response.json();
+  contentBlocks = pageData.content;
+} else {
+  console.error('Failed to fetch content from payload.')
+}
 
+const infoResponse = await fetch(`${SERVER_URL}api/globals/contact-info`)
 let contactEmail = 'Failed to fetch email from Payload';
 if (infoResponse.ok) {
   const contactData = await infoResponse.json();
@@ -17,7 +25,7 @@ if (infoResponse.ok) {
 ---
 
 <BaseLayout title="Contact — David J. Barrios">
-  <BlockPage collectionName="contact-content"/>
+  <BlockPage contentBlocks={contentBlocks}/>
   {contactEmail && (
       <div class="mt-12 flex justify-center">
         <a 

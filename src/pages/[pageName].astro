@@ -1,0 +1,49 @@
+---
+import type { GetStaticPaths } from "astro";
+import type { PageInfo } from '../types'
+
+import BaseLayout from '../layout/BaseLayout.astro'
+import BlockPage from "../components/BlockPage.astro"
+
+interface Props {
+  content: any[];
+}
+
+export const getStaticPaths = (async () => {
+
+  // @TODO resolve literal constant naming inconsistencies within the repository if any
+  const SERVER_URL = import.meta.env.NEXT_PUBLIC_SERVER_URL;
+  const pagesRequest = await fetch(`${SERVER_URL}api/pages?limit=100`);
+
+
+  if (pagesRequest.ok) {
+    const pagesData = await pagesRequest.json();
+    const pagesInfo = pagesData.docs as PageInfo[];
+
+    console.error('foo')
+
+    return pagesInfo.map(({ pageName, content }) => {
+      return {
+        params: { pageName },
+        props: { content }
+      }
+    }) as any[];
+  } else {
+    console.error('Failed to fetch pages info from Payload.')
+    return [];
+  } 
+}) satisfies GetStaticPaths;
+
+const {
+  pageName
+} = Astro.params
+
+const {
+  content,
+} = Astro.props
+
+---
+
+<BaseLayout title={`${pageName} — David J. Barrios`}>
+  <BlockPage contentBlocks={content}/>
+</BaseLayout>

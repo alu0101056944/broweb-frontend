@@ -6,20 +6,13 @@ import RichTextRenderer from "../components/RichRenderer"
 
 import Videobox from '../components/Videobox.astro'
 
-const {
-  collectionName
-} = Astro.props
-
-let contentBlocks: any[] = [];
-const response = await fetch(
-  `${import.meta.env.NEXT_PUBLIC_SERVER_URL}/api/globals/${collectionName}?depth=2`
-);
-if (response.ok) {
-  const pageData = await response.json();
-  contentBlocks = pageData.content;
-} else {
-  console.error('Failed to fetch content from Payload.')
+interface Props {
+  contentBlocks: any[]; 
 }
+
+const {
+  contentBlocks,
+} = Astro.props
 
 const alignmentClasses = {
   left: 'mr-auto',
