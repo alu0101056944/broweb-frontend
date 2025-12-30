@@ -61,52 +61,6 @@ const activeClasses = "text-white"
     "md:gap-x-[var(--gap)] md:gap-y-[var(--gap)]",
     "md:grid-cols-[repeat(auto-fit,minmax(var(--min-col),1fr))]",
     "md:justify-items-center md:items-center lg:w-[60%]} lg:mt-3"]}>
-  <a
-    href="/"
-    class:list={[
-      baseClasses,
-      { [activeClasses]: isActive('/') }
-    ]}
-  >
-    Home
-  </a>
-  <a
-    href="/video-vfx"
-    class:list={[
-      baseClasses,
-      { [activeClasses]: isActive('/video-vfx') }
-    ]}
-  >
-    Video/VFX
-  </a>
-  <a
-    href="/audio-music"
-    class:list={[
-      baseClasses,
-      { [activeClasses]: isActive('/audio-music') }
-    ]}
-  >
-    Audio/Music
-  </a>
-
-  <a
-    href="/about"
-    class:list={[
-      baseClasses,
-      { [activeClasses]: isActive('/about') }
-    ]}
-  >
-    About
-  </a>
-  <a
-    href="/contact"
-    class:list={[
-      baseClasses,
-      { [activeClasses]: isActive('/contact') }
-    ]}
-  >
-    Contact
-  </a>
   {pagesTitleAndName && pagesTitleAndName.map(({ pageName, pageTitle }) => {
     return (
       <a
