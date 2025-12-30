@@ -28,66 +28,66 @@ const baseClasses = "font-logo font-light text-gray-300 hover:text-gray-100"
 const activeClasses = "text-white"
 ---
 
-<div class="flex flex-1 flex-row-reverse items-center">
-  <nav class="flex flex-wrap flex-col gap-3 pr-10 md:pr-0 md:gap-8 md:flex-row">
-    <a
-      href="/"
-      class:list={[
-        baseClasses,
-        { [activeClasses]: isActive('/') }
-      ]}
-    >
-      Home
-    </a>
-    <a
-      href="/video-vfx"
-      class:list={[
-        baseClasses,
-        { [activeClasses]: isActive('/video-vfx') }
-      ]}
-    >
-      Video/VFX
-    </a>
-    <a
-      href="/audio-music"
-      class:list={[
-        baseClasses,
-        { [activeClasses]: isActive('/audio-music') }
-      ]}
-    >
-      Audio/Music
-    </a>
+<nav class:list={["flex flex-col flex-wrap mt-5 md:mt-0 gap-3",
+    "md:w-full md:grid md:gap-x-0 md:gap-y-0 md:grid-cols-[repeat(auto-fit,minmax(100px,1fr))] md:justify-items-center",
+    "md:items-center lg:w-[60%]} lg:mt-3"]}>
+  <a
+    href="/"
+    class:list={[
+      baseClasses,
+      { [activeClasses]: isActive('/') }
+    ]}
+  >
+    Home
+  </a>
+  <a
+    href="/video-vfx"
+    class:list={[
+      baseClasses,
+      { [activeClasses]: isActive('/video-vfx') }
+    ]}
+  >
+    Video/VFX
+  </a>
+  <a
+    href="/audio-music"
+    class:list={[
+      baseClasses,
+      { [activeClasses]: isActive('/audio-music') }
+    ]}
+  >
+    Audio/Music
+  </a>
 
-    <a
-      href="/about"
-      class:list={[
-        baseClasses,
-        { [activeClasses]: isActive('/about') }
-      ]}
-    >
-      About
-    </a>
-    <a
-      href="/contact"
-      class:list={[
-        baseClasses,
-        { [activeClasses]: isActive('/contact') }
-      ]}
-    >
-      Contact
-    </a>
-    {pagesTitleAndName && pagesTitleAndName.map(({ pageName, pageTitle }) => {
-      return (
-        <a
-          href={`/${pageName}`}
-          class:list={[
-            baseClasses,
-            { [activeClasses]: isActive(`/${pageName}`) }
-          ]}
-        >
-          {`${pageTitle}`}
-        </a>
-      )
-    })}
-  </nav>
-</div>
+  <a
+    href="/about"
+    class:list={[
+      baseClasses,
+      { [activeClasses]: isActive('/about') }
+    ]}
+  >
+    About
+  </a>
+  <a
+    href="/contact"
+    class:list={[
+      baseClasses,
+      { [activeClasses]: isActive('/contact') }
+    ]}
+  >
+    Contact
+  </a>
+  {pagesTitleAndName && pagesTitleAndName.map(({ pageName, pageTitle }) => {
+    return (
+      <a
+        href={`/${pageName}`}
+        class:list={[
+          baseClasses,
+          { [activeClasses]: isActive(`/${pageName}`) }
+        ]}
+      >
+        {`${pageTitle}`}
+      </a>
+    )
+  })}
+</nav>
