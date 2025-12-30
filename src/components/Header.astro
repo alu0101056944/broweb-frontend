@@ -5,7 +5,7 @@ const { pathname } = Astro.url;
 
 const SERVER_URL = import.meta.env.NEXT_PUBLIC_SERVER_URL;
 
-const pagesRequest = await fetch(`${SERVER_URL}api/pages?limit=100`);
+const pagesRequest = await fetch(`${SERVER_URL}api/pages?limit=100&sort=priority`);
 let pagesTitleAndName : { pageName: string; pageTitle: string; }[]= [];
 if (pagesRequest.ok) {
   const pagesData = await pagesRequest.json();

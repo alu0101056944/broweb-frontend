@@ -4,30 +4,32 @@ import type { PageInfo } from '../types'
 
 import BaseLayout from '../layout/BaseLayout.astro'
 import BlockPage from "../components/BlockPage.astro"
+import VideoGridPage from "../components/VideoGridPage.astro";
 
 interface Props {
+  pageType: 'videoGridPage' | 'blockPage';
   content: any[];
+  mediaItems: any[];
+  pageTitle: string;
 }
 
 export const getStaticPaths = (async () => {
 
   // @TODO resolve literal constant naming inconsistencies within the repository if any
   const SERVER_URL = import.meta.env.NEXT_PUBLIC_SERVER_URL;
-  const pagesRequest = await fetch(`${SERVER_URL}api/pages?limit=100`);
-
+  const pagesRequest = await fetch(`${SERVER_URL}api/pages?limit=100&sort=priority`);
 
   if (pagesRequest.ok) {
     const pagesData = await pagesRequest.json();
     const pagesInfo = pagesData.docs as PageInfo[];
 
-    console.error('foo')
-
-    return pagesInfo.map(({ pageName, content }) => {
-      return {
-        params: { pageName },
-        props: { content }
-      }
-    }) as any[];
+    return pagesInfo
+      .map(({ pageName, pageTitle, content, mediaItems, pageType }) => {
+        return {
+          params: { pageName },
+          props: { content, mediaItems, pageType, pageTitle }
+        }
+      }) as any[];
   } else {
     console.error('Failed to fetch pages info from Payload.')
     return [];
@@ -35,15 +37,22 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 const {
-  pageName
-} = Astro.params
-
-const {
+  pageType,
   content,
+  mediaItems,
+  pageTitle,
 } = Astro.props
 
 ---
 
-<BaseLayout title={`${pageName} — David J. Barrios`}>
-  <BlockPage contentBlocks={content}/>
-</BaseLayout>
+{
+  pageType === 'blockPage' ? (
+    <BaseLayout title={`${pageTitle} — David J. Barrios`}>
+      <BlockPage contentBlocks={content}/>
+    </BaseLayout>
+  ) : (
+    <BaseLayout title={`${pageTitle} — David J. Barrios`}>
+      <VideoGridPage mediaItems={mediaItems}/>
+    </BaseLayout>
+  )
+}

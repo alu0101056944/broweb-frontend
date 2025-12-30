@@ -1,0 +1,76 @@
+---
+
+import BaseLayout from '../layout/BaseLayout.astro'
+
+import Videobox from '../components/Videobox.astro'
+
+interface VideoInput {
+  relationTo: string;
+  value: {
+    videoUrl: string;
+    description: string;
+    priority?: number;
+    useThumbnailUrl: boolean;
+    thumbnailUrl: string;
+  };
+}
+
+interface VideoOutput {
+  videoId: string;
+  description: string;
+  useThumbnailUrl: boolean;
+  thumbnailUrl: string;
+  provider: 'youtube' | 'vimeo';
+}
+
+interface Props {
+  mediaItems: VideoInput[];
+}
+
+const {
+  mediaItems
+} = Astro.props;
+
+const YOUTUBE_URL_REGEXP = /(?:watch\?v=|youtu\.be\/|\/(?:embed|shorts|live)\/)([a-zA-Z0-9_-]{11})/
+const VIMEO_URL_REGEXP = /(?:vimeo\.com\/|player\.vimeo\.com\/video\/)([0-9]+)/;
+const videosIdAndDescription = mediaItems
+  .map(({ value }) => {
+      const ytMatch = value.videoUrl.match(YOUTUBE_URL_REGEXP);
+      if (ytMatch) {
+        return {
+          videoId: ytMatch[1],
+          description: value.description,
+          useThumbnailUrl: value.useThumbnailUrl,
+          thumbnailUrl: value.thumbnailUrl,
+          provider: 'youtube'
+        } as VideoOutput
+      }
+
+      const vimeoMatch = value.videoUrl.match(VIMEO_URL_REGEXP)
+      if (vimeoMatch) {
+        return {
+          videoId: vimeoMatch[1],
+          description: value.description,
+          useThumbnailUrl: value.useThumbnailUrl,
+          thumbnailUrl: value.thumbnailUrl,
+          provider: 'vimeo'
+        } as VideoOutput
+      }
+
+      return null
+    })
+  .filter(_ => _ != null);
+
+---
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-15" id="video-gallery">
+  {videosIdAndDescription.map(({ videoId, description, useThumbnailUrl, thumbnailUrl, provider }) => (
+    <Videobox
+      id={videoId}
+      thumbnailUrl={useThumbnailUrl ? thumbnailUrl : `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` }
+      description={description}
+      fallbackThumbnailUrl={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
+      provider={provider}
+    />
+  ))}
+</div>
