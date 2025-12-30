@@ -16,12 +16,14 @@ let themeSettings : {
   separatorChar: string;
   minColumnWidthPx: number;
   gap: number;
+  postfixText: string;
 } = {
   logoText: 'DAVID J. BARRIOS',
   subText: 'Audiovisual producer',
   separatorChar: '◆',
   minColumnWidthPx: 140,
   gap: 0,
+  postfixText: ' — David J. Barrios',
 };
 const settingsRequest = await fetch(`${SERVER_URL}api/globals/theme-settings`);
 if (settingsRequest.ok) {
@@ -41,7 +43,7 @@ const { title } = Astro.props
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
     <meta name="referrer" content="strict-origin-when-cross-origin">
-		<title>{title}</title>
+		<title>{title}{themeSettings.postfixText}</title>
 	</head>
 	<body
     class="flex flex-col min-h-screen bg-black

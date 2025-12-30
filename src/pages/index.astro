@@ -5,16 +5,25 @@ import BlockPage from "../components/BlockPage.astro"
 const SERVER_URL = import.meta.env.NEXT_PUBLIC_SERVER_URL;
 
 let contentBlocks : any[] = [];
-const response = await fetch(`${SERVER_URL}api/globals/home?depth=2`);
-if (response.ok) {
-  const pageData = await response.json();
+const homeContentResponse = await fetch(`${SERVER_URL}api/globals/home?depth=2`);
+if (homeContentResponse.ok) {
+  const pageData = await homeContentResponse.json();
   contentBlocks = pageData.content;
 } else {
-  console.error('Failed to fetch content from payload.')
+  console.error('Failed to fetch content from payload.');
+}
+
+let homeTitle : string = 'Home';
+const themeSettingsResponse = await fetch(`${SERVER_URL}api/globals/theme-settings`);
+if (themeSettingsResponse.ok) {
+  const themeSettings = await themeSettingsResponse.json();
+  homeTitle = themeSettings.homePageTitle;
+} else {
+  console.error('Failed to fetch home page menu title from payload.');
 }
 
 ---
 
-<BaseLayout title="David J. Barrios">
+<BaseLayout title={homeTitle}>
   <BlockPage contentBlocks={contentBlocks}/>
 </BaseLayout>
