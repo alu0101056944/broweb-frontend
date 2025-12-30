@@ -4,9 +4,9 @@
 const { pathname } = Astro.url;
 
 const SERVER_URL = import.meta.env.NEXT_PUBLIC_SERVER_URL;
+
 const pagesRequest = await fetch(`${SERVER_URL}api/pages?limit=100`);
 let pagesTitleAndName : { pageName: string; pageTitle: string; }[]= [];
-
 if (pagesRequest.ok) {
   const pagesData = await pagesRequest.json();
   pagesTitleAndName = pagesData.docs.map((p: any) => ({
@@ -16,6 +16,32 @@ if (pagesRequest.ok) {
 } else {
   console.error('Failed to fetch payload pages for the header menu links.')
 }
+
+let themeSettings : {
+  logoText: string;
+  subText: string;
+  separatorChar: string;
+  minColumnWidthPx: number;
+  gap: number;
+} = {
+  logoText: 'DAVID J. BARRIOS',
+  subText: 'Audiovisual producer',
+  separatorChar: '◆',
+  minColumnWidthPx: 140,
+  gap: 0,
+};
+const settingsRequest = await fetch(`${SERVER_URL}api/globals/theme-settings`);
+if (settingsRequest.ok) {
+  const theme = await settingsRequest.json()
+  themeSettings = theme
+} else {
+  console.error('Failed to fetch payload theme settings for the header css properties.')
+}
+
+const navStyles = {
+  '--min-col': `${themeSettings.minColumnWidthPx}px`,
+  '--gap': `${themeSettings.gap * 0.25}em`,
+};
 
 function isActive(href: string) {
   if (href === '/') {
@@ -28,9 +54,13 @@ const baseClasses = "font-logo font-light text-gray-300 hover:text-gray-100"
 const activeClasses = "text-white"
 ---
 
-<nav class:list={["flex flex-col flex-wrap mt-5 md:mt-0 gap-3",
-    "md:w-full md:grid md:gap-x-0 md:gap-y-0 md:grid-cols-[repeat(auto-fit,minmax(100px,1fr))] md:justify-items-center",
-    "md:items-center lg:w-[60%]} lg:mt-3"]}>
+<nav
+  style={navStyles}
+  class:list={["flex flex-col flex-wrap mt-5 md:mt-0 gap-3",
+    "md:w-full md:grid",
+    "md:gap-x-[var(--gap)] md:gap-y-[var(--gap)]",
+    "md:grid-cols-[repeat(auto-fit,minmax(var(--min-col),1fr))]",
+    "md:justify-items-center md:items-center lg:w-[60%]} lg:mt-3"]}>
   <a
     href="/"
     class:list={[
