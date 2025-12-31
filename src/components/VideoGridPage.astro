@@ -1,7 +1,4 @@
 ---
-
-import BaseLayout from '../layout/BaseLayout.astro'
-
 import Videobox from '../components/Videobox.astro'
 
 interface VideoInput {
@@ -63,7 +60,7 @@ const videosIdAndDescription = mediaItems
 
 ---
 
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-15" id="video-gallery">
+<div class="font-body grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-15" id="video-gallery">
   {videosIdAndDescription.map(({ videoId, description, useThumbnailUrl, thumbnailUrl, provider }) => (
     <Videobox
       id={videoId}
