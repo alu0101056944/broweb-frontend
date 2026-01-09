@@ -11,6 +11,7 @@ interface Props {
   content: any[];
   mediaItems: any[];
   pageTitle: string;
+  pageDescription: string;
 }
 
 export const getStaticPaths = (async () => {
@@ -24,10 +25,10 @@ export const getStaticPaths = (async () => {
     const pagesInfo = pagesData.docs as PageInfo[];
 
     return pagesInfo
-      .map(({ pageName, pageTitle, content, mediaItems, pageType }) => {
+      .map(({ pageName, pageTitle, content, mediaItems, pageType, pageDescription }) => {
         return {
           params: { pageName },
-          props: { content, mediaItems, pageType, pageTitle }
+          props: { content, mediaItems, pageType, pageTitle, pageDescription }
         }
       }) as any[];
   } else {
@@ -41,18 +42,20 @@ const {
   content,
   mediaItems,
   pageTitle,
+  pageDescription,
 } = Astro.props
 
 ---
 
 {
-  pageType === 'blockPage' ? (
-    <BaseLayout title={`${pageTitle}`}>
+  <BaseLayout
+    title={`${pageTitle}`}
+    pageDescription={pageDescription}
+  >
+    {pageType === 'blockPage' ? (
       <BlockPage contentBlocks={content}/>
-    </BaseLayout>
-  ) : (
-    <BaseLayout title={`${pageTitle}`}>
+    ) : (
       <VideoGridPage mediaItems={mediaItems}/>
-    </BaseLayout>
-  )
+    )}
+  </BaseLayout>
 }

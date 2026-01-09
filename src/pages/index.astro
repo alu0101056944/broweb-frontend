@@ -13,17 +13,24 @@ if (homeContentResponse.ok) {
   console.error('Failed to fetch content from payload.');
 }
 
-let homeTitle : string = 'Home';
+let settings : {
+  homeTitle: string;
+  homePageDescription: string;
+} = {
+  homeTitle: 'Home',
+  homePageDescription: '',
+}
 const themeSettingsResponse = await fetch(`${SERVER_URL}api/globals/theme-settings`);
 if (themeSettingsResponse.ok) {
   const themeSettings = await themeSettingsResponse.json();
-  homeTitle = themeSettings.homePageTitle;
+  settings.homeTitle = themeSettings.homePageTitle;
+  settings.homePageDescription = themeSettings.homePageDescription;
 } else {
   console.error('Failed to fetch home page menu title from payload.');
 }
 
 ---
 
-<BaseLayout title={homeTitle}>
+<BaseLayout title={settings.homeTitle} pageDescription={settings.homePageDescription}>
   <BlockPage contentBlocks={contentBlocks}/>
 </BaseLayout>

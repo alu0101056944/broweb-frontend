@@ -4,4 +4,5 @@ export interface PageInfo {
   pageType: 'videoGridPage' | 'blockPage';
   content: any[];
   mediaItems: any[];
+  pageDescription: string;
 }

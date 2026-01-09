@@ -4,8 +4,8 @@ import tailwindcss from "@tailwindcss/vite";
 
 import react from '@astrojs/react';
 
-const SITE_URL = process.env.VERCEL_URL 
-  ? `https://${process.env.VERCEL_URL}`
+const SITE_URL = process.env.PRODUCTION_VERCEL_URL 
+  ? `https://${process.env.PRODUCTION_VERCEL_URL}`
   : 'https://davidjbarrios.com';
 
 // https://astro.build/config
