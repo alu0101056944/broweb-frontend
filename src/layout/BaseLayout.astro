@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
-
 import '@fontsource/open-sans';
+import { SEO } from 'astro-seo';
 
 import Header from '../components/Header.astro'
 import VideoModal from '../components/Videomodal';
@@ -38,14 +38,30 @@ if (settingsRequest.ok) {
 const { title } = Astro.props
 ---
 
-<html lang="es">
+<html lang="en">
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-    <meta name="referrer" content="strict-origin-when-cross-origin">
-		<title>{title}{themeSettings.postfixText}</title>
+    <SEO
+      title={`${title}${themeSettings.postfixText}`}
+      description={"David J. Barrios is an instrumental metal songwriter and producer based in Spain, creating" +
+        "cinematic heavy music for creators, developers, and brands who need sound that carries weight and" +
+        "intention."}
+      openGraph={{
+        basic: {
+          title: "David J. Barrios Audiovisual Producer Portfolio",
+          type: "website",
+          image: "https://media.licdn.com/dms/image/v2/D4E2DAQEkSQSkTb8EGg/profile-treasury-image-shrink_1280_1280/B4EZtcsFLbHMAQ-/0/1766786618992?e=1768568400&v=beta&t=5Udkke3JpvnCLRFo0q5KWHlm41lIN77mhha4rBos45A",
+        }
+      }}
+      extend={{
+        meta: [
+          { name: "viewport", content: "width=device-width" },
+          { name: "generator", content: Astro.generator },
+          { name: "referrer", content: "strict-origin-when-cross-origin" }
+        ],
+      }}
+    />
 	</head>
 	<body
     class="flex flex-col min-h-screen bg-black
@@ -70,7 +86,7 @@ const { title } = Astro.props
               <span class="hidden md:inline md:ml-8 md:mr-6 lg:hidden lg:mx-0">
                 {themeSettings.separatorChar}
               </span>
-              <h2 class="font-logo shrink-0">{themeSettings.subText}</h2>
+              {themeSettings.subText && <h2 class="font-logo shrink-0">{themeSettings.subText}</h2>}
             </div>
           </div>
           <Header/>
