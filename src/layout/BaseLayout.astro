@@ -47,6 +47,7 @@ const { title } = Astro.props
       description={"David J. Barrios is an instrumental metal songwriter and producer based in Spain, creating" +
         "cinematic heavy music for creators, developers, and brands who need sound that carries weight and" +
         "intention."}
+      canonical={new URL(Astro.url.pathname, Astro.site).toString()}
       openGraph={{
         basic: {
           title: "David J. Barrios Audiovisual Producer Portfolio",
