@@ -21,7 +21,7 @@ let themeSettings : {
   gap: number;
   postfixText: string;
   homeDescription: string;
-  openGraphImage: string;
+  openGraphImageURL: string;
   openGraphTitle: string;
   metaPageDescription: string;
 } = {
@@ -32,7 +32,7 @@ let themeSettings : {
   gap: 0,
   postfixText: ' — David J. Barrios',
   homeDescription: '',
-  openGraphImage: '',
+  openGraphImageURL: '',
   openGraphTitle: '',
   metaPageDescription: '',
 };
@@ -62,7 +62,7 @@ const {
         basic: {
           title: themeSettings.openGraphTitle,
           type: "website",
-          image: themeSettings.openGraphImage,
+          image: themeSettings.openGraphImageURL,
         }
       }}
       extend={{
