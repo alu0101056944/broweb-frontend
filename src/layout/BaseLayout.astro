@@ -21,6 +21,9 @@ let themeSettings : {
   gap: number;
   postfixText: string;
   homeDescription: string;
+  openGraphImage: string;
+  openGraphTitle: string;
+  metaPageDescription: string;
 } = {
   logoText: 'DAVID J. BARRIOS',
   subText: 'Audiovisual producer',
@@ -29,6 +32,9 @@ let themeSettings : {
   gap: 0,
   postfixText: ' — David J. Barrios',
   homeDescription: '',
+  openGraphImage: '',
+  openGraphTitle: '',
+  metaPageDescription: '',
 };
 const settingsRequest = await fetch(`${SERVER_URL}api/globals/theme-settings`);
 if (settingsRequest.ok) {
@@ -38,7 +44,10 @@ if (settingsRequest.ok) {
   console.error('Failed to fetch payload theme settings for the header css properties.')
 }
 
-const { title, pageDescription } = Astro.props
+const {
+  title,
+  pageDescription
+} = Astro.props
 ---
 
 <html lang="en">
@@ -47,13 +56,13 @@ const { title, pageDescription } = Astro.props
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <SEO
       title={`${title}${themeSettings.postfixText}`}
-      description={"David J. Barrios is an instrumental metal songwriter and producer based in Spain."}
+      description={themeSettings.metaPageDescription}
       canonical={new URL(Astro.url.pathname, Astro.site).toString()}
       openGraph={{
         basic: {
-          title: "David J. Barrios Audiovisual Producer Portfolio",
+          title: themeSettings.openGraphTitle,
           type: "website",
-          image: "https://media.licdn.com/dms/image/v2/D4E2DAQEkSQSkTb8EGg/profile-treasury-image-shrink_1280_1280/B4EZtcsFLbHMAQ-/0/1766786618992?e=1768568400&v=beta&t=5Udkke3JpvnCLRFo0q5KWHlm41lIN77mhha4rBos45A",
+          image: themeSettings.openGraphImage,
         }
       }}
       extend={{
