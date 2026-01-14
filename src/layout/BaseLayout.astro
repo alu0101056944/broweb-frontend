@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import '@fontsource/open-sans';
 import { SEO } from 'astro-seo';
+import { Image } from 'astro:assets';
 
 import Menu from '../components/Menu.astro'
 import VideoModal from '../components/Videomodal';
@@ -42,6 +43,31 @@ if (settingsRequest.ok) {
   themeSettings = theme
 } else {
   console.error('Failed to fetch payload theme settings for the header css properties.')
+}
+
+let socialMedias : {
+  name: string;
+  url: string;
+  iconUrl: string;
+  redimensionIcon: string;
+  redimensionWidth: number;
+  redimensionHeight: number;
+  imageDimensions: { width: number | null; height: number | null; };
+}[] = []
+const socialMediaRequest = await fetch(`${SERVER_URL}api/socialmedia?limit=100&sort=priority`);
+if (socialMediaRequest.ok) {
+  const socialMediaData = await socialMediaRequest.json();
+  socialMedias = socialMediaData.docs as {
+    name: string;
+    url: string;
+    iconUrl: string;
+    redimensionIcon: string;
+    redimensionWidth: number;
+    redimensionHeight: number;
+    imageDimensions: { width: number | null; height: number | null; };
+  }[];
+} else {
+  console.error('Failed to fetch social media info info from Payload.');
 }
 
 const {
@@ -118,5 +144,38 @@ const {
         </script>
       </div>
     </main>
+    <footer class="w-full">
+      <div class="flex flex-col mx-auto items-center max-w-6xl gap-x-8 px-8 pt-8 pb-30">
+        <div class="flex items-center justify-content">
+          {
+            socialMedias.map(socialMedia => (
+              socialMedia.redimensionIcon ? (
+                <a href={socialMedia.url}>
+                  <Image
+                    src={socialMedia.iconUrl}
+                    width={socialMedia.redimensionWidth}
+                    height={socialMedia.redimensionHeight}
+                    alt={socialMedia.name}
+                    class="rounded-lg shadow-lg"
+                    loading="lazy"
+                  />
+                </a>
+              ) : (
+                <a href={socialMedia.url}>
+                  <Image
+                    src={socialMedia.iconUrl}
+                    width={socialMedia.imageDimensions.width ?? 0}
+                    height={socialMedia.imageDimensions.height ?? 0}
+                    alt={socialMedia.name}
+                    class="rounded-lg shadow-lg"
+                    loading="lazy"
+                  />
+                </a>
+              )
+            ))
+          }
+        </div>
+      </div>
+    </footer>
 	</body>
 </html>

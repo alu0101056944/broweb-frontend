@@ -32,7 +32,7 @@ export const getStaticPaths = (async () => {
         }
       }) as any[];
   } else {
-    console.error('Failed to fetch pages info from Payload.')
+    console.error('Failed to fetch pages info from Payload.');
     return [];
   } 
 }) satisfies GetStaticPaths;
