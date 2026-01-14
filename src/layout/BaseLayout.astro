@@ -6,6 +6,7 @@ import { Image } from 'astro:assets';
 
 import Menu from '../components/Menu.astro'
 import VideoModal from '../components/Videomodal';
+import BlockPage from "../components/BlockPage.astro"
 
 interface Props {
   title: string;
@@ -25,6 +26,8 @@ let themeSettings : {
   openGraphImageURL: string;
   openGraphTitle: string;
   metaPageDescription: string;
+  bottomPadding: number;
+  content: any[];
 } = {
   logoText: 'DAVID J. BARRIOS',
   subText: 'Audiovisual producer',
@@ -36,6 +39,8 @@ let themeSettings : {
   openGraphImageURL: '',
   openGraphTitle: '',
   metaPageDescription: '',
+  bottomPadding: 30,
+  content: [],
 };
 const settingsRequest = await fetch(`${SERVER_URL}api/globals/theme-settings`);
 if (settingsRequest.ok) {
@@ -145,7 +150,12 @@ const {
       </div>
     </main>
     <footer class="w-full">
-      <div class="flex flex-col mx-auto items-center max-w-6xl gap-x-8 px-8 pt-8 pb-30">
+      <div class:list={[
+          "flex flex-col mx-auto items-center max-w-6xl gap-x-8 px-8 pt-8",
+          `pb-${themeSettings.bottomPadding}`
+        ]}
+      >
+        <BlockPage contentBlocks={themeSettings.content}/>
         <div class="flex items-center justify-content">
           {
             socialMedias.map(socialMedia => (
