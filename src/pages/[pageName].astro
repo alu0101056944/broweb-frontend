@@ -8,7 +8,7 @@ import VideoGridPage from "../components/VideoGridPage.astro";
 
 interface Props {
   pageType: 'videoGridPage' | 'blockPage';
-  textpageContent: any[];
+  content: { textpageContent: any[] };
   mediaItems: any[];
   pageTitle: string;
   pageDescription: string;
@@ -25,10 +25,10 @@ export const getStaticPaths = (async () => {
     const pagesInfo = pagesData.docs as PageInfo[];
 
     return pagesInfo
-      .map(({ pageName, pageTitle, textpageContent, mediaItems, pageType, pageDescription }) => {
+      .map(({ pageName, pageTitle, content, mediaItems, pageType, pageDescription }) => {
         return {
           params: { pageName },
-          props: { textpageContent, mediaItems, pageType, pageTitle, pageDescription }
+          props: { content, mediaItems, pageType, pageTitle, pageDescription }
         }
       }) as any[];
   } else {
@@ -39,7 +39,7 @@ export const getStaticPaths = (async () => {
 
 const {
   pageType,
-  textpageContent,
+  content,
   mediaItems,
   pageTitle,
   pageDescription,
@@ -53,7 +53,7 @@ const {
     pageDescription={pageDescription}
   >
     {pageType === 'blockPage' ? (
-      <BlockPage contentBlocks={textpageContent}/>
+      <BlockPage contentBlocks={content.textpageContent}/>
     ) : (
       <VideoGridPage mediaItems={mediaItems}/>
     )}
