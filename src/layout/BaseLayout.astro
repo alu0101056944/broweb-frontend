@@ -27,7 +27,7 @@ let themeSettings : {
   openGraphTitle: string;
   metaPageDescription: string;
   bottomPadding: number;
-  content: any[];
+  textpageContent: any[];
 } = {
   logoText: 'DAVID J. BARRIOS',
   subText: 'Audiovisual producer',
@@ -40,7 +40,7 @@ let themeSettings : {
   openGraphTitle: '',
   metaPageDescription: '',
   bottomPadding: 30,
-  content: [],
+  textpageContent: [],
 };
 const settingsRequest = await fetch(`${SERVER_URL}api/globals/theme-settings`);
 if (settingsRequest.ok) {
@@ -154,7 +154,7 @@ const {
         class="flex flex-col mx-auto items-center max-w-6xl gap-x-8 px-8 pt-8"
         style={{ paddingBottom: `${themeSettings.bottomPadding}px` }}
       >
-        <BlockPage contentBlocks={themeSettings.content}/>
+        <BlockPage contentBlocks={themeSettings.textpageContent}/>
         <div class="flex items-center justify-content">
           {
             socialMedias.map(socialMedia => (

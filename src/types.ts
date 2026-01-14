@@ -2,7 +2,7 @@ export interface PageInfo {
   pageName: string;
   pageTitle: string;
   pageType: 'videoGridPage' | 'blockPage';
-  content: any[];
+  textpageContent: any[];
   mediaItems: any[];
   pageDescription: string;
 }

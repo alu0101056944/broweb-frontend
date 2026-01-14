@@ -8,7 +8,7 @@ let contentBlocks : any[] = [];
 const homeContentResponse = await fetch(`${SERVER_URL}api/globals/home?depth=2`);
 if (homeContentResponse.ok) {
   const pageData = await homeContentResponse.json();
-  contentBlocks = pageData.content;
+  contentBlocks = pageData.textpageContent;
 } else {
   console.error('Failed to fetch content from payload.');
 }
