@@ -4,9 +4,10 @@ import '@fontsource/open-sans';
 import { SEO } from 'astro-seo';
 import { Image } from 'astro:assets';
 
-import Menu from '../components/Menu.astro'
+import Menu from '../components/Menu.astro';
 import VideoModal from '../components/Videomodal';
-import BlockPage from "../components/BlockPage.astro"
+import BlockPage from '../components/BlockPage.astro';
+import Hero from '../components/Hero.astro';
 
 interface Props {
   title: string;
@@ -110,7 +111,7 @@ const {
       text-gray-200 transition-colors duration-300"
   >
     <header class="w-full">
-      <div class="flex gap-x-8 max-w-6xl mx-auto px-8 pt-8 pb-5 items-center">
+      <div class="flex gap-x-8 max-w-6xl mx-auto px-8 pt-8 pb-2 items-center">
         <div class="
           flex flex-col w-full gap-3
           md:gap-8 mb-2 md:mb-8 md:flex-row md:flex-wrap md:justify-center
@@ -138,7 +139,12 @@ const {
       </div>
     </header>
 		<main class="flex-1 w-full">
-      <div class="max-w-6xl mx-auto px-4 py-2">
+      <div class="w-full h-90 bg-red-300 py-5">
+        <div class="max-w-7xl bg-red-400 h-full mx-auto">
+          <Hero client:load></Hero>
+        </div>
+      </div>
+      <div class="max-w-6xl mx-auto px-4 py-8">
         <slot/>
         <VideoModal client:load listenOnId="video-gallery"/>
         <script
