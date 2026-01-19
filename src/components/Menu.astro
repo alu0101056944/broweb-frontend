@@ -23,12 +23,14 @@ let themeSettings : {
   separatorChar: string;
   minColumnWidthPx: number;
   gap: number;
+  menuWidthPercent: number;
 } = {
   logoText: 'DAVID J. BARRIOS',
   subText: 'Audiovisual producer',
   separatorChar: '◆',
   minColumnWidthPx: 140,
   gap: 0,
+  menuWidthPercent: 60,
 };
 const settingsRequest = await fetch(`${SERVER_URL}api/globals/theme-settings`);
 if (settingsRequest.ok) {
