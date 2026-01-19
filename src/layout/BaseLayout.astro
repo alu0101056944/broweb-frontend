@@ -28,6 +28,20 @@ let themeSettings : {
   metaPageDescription: string;
   bottomPadding: number;
   textpageContent: any[];
+  logoWidthPercent: number;
+  menuWidthPercent: number;
+  useImageAsLogo: boolean;
+  logoImageUrl: string;
+  logoImageDescription: string;
+  logoImageDimensions: {
+    logoImageWidth: number | null;
+    logoImageHeight: number | null
+  };
+  redimensionLogoImage: boolean;
+  newLogoImageDimensions: {
+    newLogoImageWidth: number | null;
+    newLogoImageHeight: number | null
+  };
 } = {
   logoText: 'DAVID J. BARRIOS',
   subText: 'Audiovisual producer',
@@ -41,6 +55,20 @@ let themeSettings : {
   metaPageDescription: '',
   bottomPadding: 30,
   textpageContent: [],
+  logoWidthPercent: 40,
+  menuWidthPercent: 60,
+  useImageAsLogo: false,
+  logoImageUrl: 'https://i.imgur.com/mJkiodO.jpeg',
+  logoImageDescription: 'Go to home',
+  logoImageDimensions: {
+    logoImageWidth: 736,
+    logoImageHeight: 163,
+  },
+  redimensionLogoImage: true,
+  newLogoImageDimensions: {
+    newLogoImageWidth: 150,
+    newLogoImageHeight: 100,
+  }
 };
 const settingsRequest = await fetch(`${SERVER_URL}api/globals/theme-settings`);
 if (settingsRequest.ok) {
@@ -118,20 +146,41 @@ const {
         >
           <div class="
             flex flex-col
-            md:flex-row md:shrink-0
+            md:flex-row md:items-center md:shrink-0
             lg:flex-col lg:w-[40%]
-            cursor-default"
+            cursor-pointer"
           >
-            <a class="font-logo text-4xl font-bold shrink-0" href="/">{themeSettings.logoText}</a>
+            {themeSettings.useImageAsLogo ? (
+              <a href="/">
+                <Image
+                  src={themeSettings.logoImageUrl}
+                  width={themeSettings.newLogoImageDimensions.newLogoImageWidth!}
+                  height={themeSettings.newLogoImageDimensions.newLogoImageHeight!}
+                  alt={themeSettings.logoImageDescription}
+                  loading="lazy"
+                />
+              </a>
+            ) : (
+              <a class="font-logo text-4xl font-bold shrink-0 whitespace-pre-wrap" href="/">
+                {themeSettings.logoText}
+              </a>
+            )}
             <h1 class="sr-only">{pageDescription}</h1>
             {themeSettings.separatorChar && (
               <div class="flex items-center">
-                <span class="hidden md:inline md:ml-8 md:mr-6 lg:hidden lg:mx-0">
+                <span
+                  class="hidden md:inline md:ml-8 md:mr-6 lg:hidden lg:mx-0 whitespace-pre-wrap
+                    cursor-default"
+                >
                   {themeSettings.separatorChar}
                 </span>
               </div>
             )}
-            {themeSettings.subText && <h2 class="font-logo shrink-0">{themeSettings.subText}</h2>}
+            {themeSettings.subText && (
+              <h2 class="font-logo shrink-0 whitespace-pre-wrap cursor-default h-fit">
+                {themeSettings.subText}
+              </h2>
+            )}
           </div>
           <Menu/>
         </div>
