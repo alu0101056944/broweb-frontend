@@ -1,0 +1,287 @@
+---
+import { Image } from 'astro:assets';
+import typography from '@tailwindcss/typography';
+
+import RichTextRenderer from "../components/RichRenderer"
+
+import Videobox from '../components/Videobox.astro'
+
+const alignmentClasses = {
+  left: 'mr-auto',
+  center: 'mx-auto',
+  right: 'ml-auto',
+};
+
+const paddingJustifyClasses = {
+  left: 'justify-start',
+  center: 'justify-center',
+  right: 'justify-end',
+}
+
+const columnClasses = {
+  '2': 'lg:grid-cols-2',
+  '3': 'lg:grid-cols-3',
+  '4': 'lg:grid-cols-4',
+};
+
+const getVideoData = (url: string) => {
+  const youtubeUrlRegexp = /(?:watch\?v=|youtu\.be\/|\/(?:embed|shorts|live)\/)([a-zA-Z0-9_-]{11})/;
+  const vimeoUrlRegexp = /(?:vimeo\.com\/|player\.vimeo\.com\/video\/)([0-9]+)/;
+
+  const ytMatch = url.match(youtubeUrlRegexp);
+  if (ytMatch) {
+    return {
+      id: ytMatch[1],
+      provider: 'youtube',
+      isShort: url.includes('/shorts/')
+    };
+  }
+
+  const vimeoMatch = url.match(vimeoUrlRegexp);
+  if (vimeoMatch) {
+    return {
+      id: vimeoMatch[1],
+      provider: 'vimeo',
+      isShort: false // Vimeo URLs don't explicitly indicate vertical/shorts in the URL structure
+    };
+  }
+
+  return null;
+};
+
+const { block } = Astro.props;
+---
+
+{block.blockType === 'richTextBlock' && (
+  <RichTextRenderer data={block.richText} client:load />
+)}
+
+{block.blockType === 'imageBlock' && (() => {
+  const alignmentClass = alignmentClasses[block.alignment] ?? alignmentClasses.center;
+  return (
+    <figure class:list={["w-fit my-8", alignmentClass]}>
+      <img 
+        src={block.imageUrl} 
+        alt={block.altText}
+        width={block.imageDimensions.width > 0 ? block.imageDimensions.width : undefined}
+        height={block.imageDimensions.height > 0 ? block.imageDimensions.height : undefined}
+        class="rounded-lg shadow-lg"
+      />
+      {block.altText && (
+        <figcaption class="text-center text-sm text-slate-400 mt-2">
+          {block.altText}
+        </figcaption>
+      )}
+    </figure>
+  );
+})()}
+
+{block.blockType === 'textWithImageBlock' && (() => {
+  const flexClass = block.alignment === 'right' ? 'md:flex-row-reverse' : 'md:flex-row';
+  const textWidth = block.horizontalTextSpace ?? 75;
+  const imageWidth = 100 - textWidth;
+
+  let imageContainerStyles = '';
+  let imageWrapperClasses = 'flex w-full';
+
+  if (block.usePercentageBasedPadding) {
+    const paddingValue = block.percentageImagePadding ?? 0;
+    if (block.alignment === 'left') {
+      imageContainerStyles = `padding-right: ${paddingValue}%;`;
+    } else {
+      imageContainerStyles = `padding-left: ${paddingValue}%;`;
+    }
+  } else {
+    imageWrapperClasses += ` ${paddingJustifyClasses[block.imagePadding] ?? 'justify-center'}`;
+  }
+
+  return (
+    <div class:list={["flex flex-col md:flex-row my-8 gap-8 items-center", flexClass]}>
+      <div class="flex-shrink-0" style={`flex-basis: ${imageWidth}%;`}>
+        <div class:list={[imageWrapperClasses]} style={imageContainerStyles}>
+          <figure class="w-full">
+            <Image
+              src={block.imageUrl}
+              width={block.imageDimensions.width}
+              height={block.imageDimensions.height}
+              alt={block.altText}
+              class="rounded-lg shadow-lg w-full h-auto"
+              loading="lazy"
+            />
+            <figcaption class="text-center text-sm text-slate-400 mt-2">
+              {block.altText}
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+      <div class="flex-shrink" style={`flex-basis: ${textWidth}%;`}>
+        <RichTextRenderer data={block.richText} client:load />
+      </div>
+    </div>
+  );
+})()}
+
+{block.blockType === 'textWithVideo' && (() => {
+  const videoData = getVideoData(block.videoUrl);
+  if (!videoData) {
+    console.error('Could not parse video URL ' + block.videoUrl);
+    return null;
+  }
+
+  const { id: VIDEO_ID, provider, isShort } = videoData;
+  const flexClass = block.videoAlignment === 'right' ? 'md:flex-row-reverse' : 'md:flex-row';
+  const embedSrc = provider === 'youtube' 
+    ? `https://www.youtube.com/embed/${VIDEO_ID}` 
+    : `https://player.vimeo.com/video/${VIDEO_ID}`;
+
+  const dimensionsClass = isShort ? 'aspect-[9/16]' : 'aspect-video';
+  const textWidth = block.horizontalTextSpace ?? 75; 
+  const videoWidth = 100 - textWidth;
+
+  let videoContainerStyles = '';
+  let videoWrapperClasses = 'flex w-full';
+  if (block.usePercentageBasedPadding) {
+    const paddingValue = block.percentageVideoPadding ?? 0;
+    if (block.videoAlignment === 'left') {
+      videoContainerStyles = `padding-right: ${paddingValue}%;`;
+    } else {
+      videoContainerStyles = `padding-left: ${paddingValue}%;`;
+    }
+  } else {
+    videoWrapperClasses += ` ${paddingJustifyClasses[block.videoPadding] ?? 'justify-center'}`;
+  }
+
+  return (
+    <div class:list={["flex flex-col md:flex-row my-8 gap-8 items-center", flexClass]}>
+      <div class="w-full flex-shrink-0" style={`flex-basis: ${videoWidth}%;`}>
+        <div class:list={[videoWrapperClasses]} style={videoContainerStyles}>
+          <div class:list={["relative w-full", dimensionsClass]}>
+            <iframe
+              class="absolute top-0 left-0 border-0 shadow-lg w-full h-full rounded-lg"
+              src={embedSrc}
+              title={`${provider === 'youtube' ? 'YouTube' : 'Vimeo'} video player`}
+              allow="fullscreen; accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              loading="lazy"
+            ></iframe>
+          </div>
+        </div>
+      </div>
+      <div class="flex-shrink" style={`flex-basis: ${textWidth}%;`}>
+        <RichTextRenderer data={block.description} client:load />
+      </div>
+    </div>
+  );
+})()}
+
+{block.blockType === 'mediaGrid' && (() => {
+  const gridClass = columnClasses[block.columns || '3'];
+  const validMediaItems = block.mediaItems?.filter(item => typeof item.value === 'object' && item.value !== null) || [];
+
+  return (
+    <div class="" id="video-gallery">
+      {block.title && <h2 class="font-bold mb-3 text-center">{block.title}</h2>}
+      <div class={`grid grid-cols-1 sm:grid-cols-2 ${gridClass} gap-x-3 gap-y-15`} id={`media-grid-${block.id}`}>
+        {validMediaItems.map(({ value: item }) => {
+          const videoData = getVideoData(item.videoUrl);
+          if (!videoData) return null;
+
+          const { id: videoId, provider } = videoData;
+          let thumbnailUrl = item.thumbnailUrl;
+          let fallbackThumbnailUrl = 'https://media.istockphoto.com/id/1222357475/es/vector/icono-de-vista-previa-de-imagen-marcador-de-posici%C3%B3n-de-imagen-para-el-sitio-web-o-el-dise%C3%B1o.webp?s=2048x2048&w=is&k=20&c=YvKjw7jovw82P-nx8T_k5eCgn902VoO1vVpvRmwoe50=';
+
+          if (provider === 'youtube') {
+            if (!thumbnailUrl || thumbnailUrl === '') {
+              thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+            }
+            fallbackThumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+          }
+
+          return (
+            <Videobox
+              id={videoId}
+              thumbnailUrl={thumbnailUrl}
+              description={item.description}
+              fallbackThumbnailUrl={fallbackThumbnailUrl}
+              provider={provider}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+})()}
+
+{block.blockType === 'videoBlock' && (() => {
+  const videoData = getVideoData(block.videoUrl);
+  if (!videoData) return null;
+  
+  const { id: videoId, provider } = videoData;
+  const embedSrc = provider === 'youtube' 
+    ? `https://www.youtube.com/embed/${videoId}` 
+    : `https://player.vimeo.com/video/${videoId}`;
+
+  let alignment = '';
+  if (block.alignment === 'center') alignment = 'mx-auto';
+  else if (block.alignment === 'left') alignment = '';
+  else if (block.alignment === 'right') alignment = 'flex-row-reverse';
+
+  return (
+    <div class:list={["my-8 flex mx-max", alignment]}>
+      <figure class:list={["w-full max-w-4xl", alignment]}>
+        <div class="relative w-full aspect-video bg-black rounded-lg overflow-hidden shadow-lg">
+          <iframe
+            src={embedSrc}
+            title={`${provider === 'youtube' ? 'YouTube' : 'Vimeo'} video player`}
+            allow="fullscreen; accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+            class="w-full h-full border-0"
+            loading="lazy"
+          ></iframe>
+        </div>
+        {block.caption && (
+          <figcaption class="mt-2 text-center text-sm text-slate-400">
+            {block.caption}
+          </figcaption>
+        )}
+      </figure>
+    </div>
+  );
+})()}
+
+{block.blockType === 'htmlBlock' && (
+  <div set:html={block.htmlContent} />
+)}
+
+{block.blockType === 'textWithHTML' && (() => {
+  const flexClass = block.htmlAlignment === 'right' ? 'md:flex-row-reverse' : 'md:flex-row';
+  const textWidth = block.horizontalTextSpace ?? 75;
+  const htmlWidth = 100 - textWidth;
+
+  let htmlContainerStyles = '';
+  let htmlWrapperClasses = 'flex w-full';
+  if (block.usePercentageBasedPadding) {
+    const paddingValue = block.percentagehtmlPadding ?? 0;
+    if (block.htmlAlignment === 'left') {
+      htmlContainerStyles = `padding-right: ${paddingValue}%;`;
+    } else {
+      htmlContainerStyles = `padding-left: ${paddingValue}%;`;
+    }
+  } else {
+    htmlWrapperClasses += ` ${paddingJustifyClasses[block.htmlPadding] ?? 'justify-center'}`;
+  }
+
+  return (
+    <div class:list={["flex my-8 gap-8 items-center", flexClass]}>
+      <div class:list={["flex-shrink-0"]} style={`flex-basis: ${htmlWidth}%;`}>
+        <div class:list={[htmlWrapperClasses]} style={htmlContainerStyles}>
+          <div class:list={["relative w-full"]}>
+            <div set:html={block.htmlContent} />
+          </div>
+        </div>
+      </div>
+      <div style={`flex-basis: ${textWidth}%;`}>
+        <RichTextRenderer data={block.description} client:load />
+      </div>
+    </div>
+  );
+})()}
