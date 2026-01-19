@@ -50,7 +50,7 @@ function isActive(href: string) {
   return pathname.startsWith(href);
 }
 
-const baseClasses = "font-logo font-light text-gray-300 hover:text-gray-100"
+const baseClasses = "font-logo font-light text-gray-300 hover:text-gray-100 whitespace-nowrap"
 const activeClasses = "text-white"
 ---
 
@@ -60,7 +60,7 @@ const activeClasses = "text-white"
     "md:w-full md:grid",
     "md:gap-x-[var(--gap)] md:gap-y-[var(--gap)]",
     "md:grid-cols-[repeat(auto-fit,minmax(var(--min-col),1fr))]",
-    "md:justify-items-center md:items-center lg:w-[60%]} lg:mt-3"]}>
+    "md:justify-items-center md:items-center lg:w-[60%]}"]}>
   <a
     href="/"
     class:list={[
