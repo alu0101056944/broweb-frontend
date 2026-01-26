@@ -15,6 +15,10 @@ const contentBlocks = [
     htmlContent: '    \r\n<div class="not-prose" style="margin-top: 3rem; display: flex; justify-content: center; width: 100%;">\r\n  <a href="mailto:davidbarriosproducciones@gmail.com" style="display: inline-flex !important; align-items: center !important; gap: 12px !important; background-color: rgb(55, 65, 81) !important; color: rgb(255, 255, 255) !important; padding: 12px 24px !important; border-radius: 6px !important; text-decoration: none !important; font-weight: 600 !important; font-family: sans-serif !important; white-space: nowrap !important; box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px !important; --darkreader-inline-bgcolor: var(--darkreader-background-374151, #454b53); --darkreader-inline-color: var(--darkreader-text-ffffff, #c9c7c5); --darkreader-inline-boxshadow: var(--darkreader-background-0000001a, rgba(38, 38, 38, 0.1)) 0px 1px 2px;" data-darkreader-inline-bgcolor="" data-darkreader-inline-color="" data-darkreader-inline-boxshadow="">\r\n    <svg style="width: 24px !important; height: 24px !important; flex-shrink: 0 !important; color: rgb(156, 163, 175) !important; --darkreader-inline-stroke: currentColor; --darkreader-inline-color: var(--darkreader-text-9ca3af, #a19d95);" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" data-darkreader-inline-stroke="" data-darkreader-inline-color="">\r\n      <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"></path>\r\n    </svg>\r\n    <span style="display: block !important;">davidbarriosproducciones@gmail.com</span>\r\n  </a>\r\n</div>\r\n\r\n  '
   },
   {
+    blockType: 'htmlBlock',
+    htmlContent: '<p>this is a test</p>'
+  },
+  {
     blockType: 'richTextBlock',
     richText: {
       "root": {
@@ -310,14 +314,17 @@ const contentBlocks = [
 ---
 <div class="relative w-full h-full group">
   
-  <a 
-    href="#slide-1" 
-    class="nav-link absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/30
-      hover:bg-black/50 text-white p-4 rounded-full cursor-pointer transition-all"
+  <button 
+    id="prev-btn"
+    class="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/30
+      hover:bg-black/50 text-white p-4 rounded-full cursor-pointer transition-all focus:outline-none"
+    aria-label="Previous slide"
   >
     &lt;
-  </a>
+  </button>
+
   <div
+    id="hero-scroll-container"
     class="flex items-center h-full bg-blue-600
       [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
     style="
@@ -326,92 +333,75 @@ const contentBlocks = [
       scroll-behavior: smooth;
       overflow-y: hidden;"
   >
-    <section
-      class="relative flex items-center justify-center bg-red-500"
-      style="
-        flex: 0 0 100%;
-        scroll-snap-align: start;"
-      id="slide-1"
-    >
-      <div
-        class="font-body prose-invert max-w-none
-          prose-sm md:prose-base lg:prose-lg
-          prose-a:text-red-200
-          prose-a:hover:text-red-100 prose-il:text-red-500
-          prose-ul:list-disc prose-ul:pl-6
-          prose-ol:list-decimal prose-ol:pl-6
-          prose-li:marker:text-slate-400
-          prose-blockquote:border-l-4
-          prose-blockquote:border-slate-500
-          prose-blockquote:pl-6
-          prose-blockquote:italic
-          prose-blockquote:text-slate-400
-          prose-blockquote:not-prose
-          "
-      >
-        <BlockContent block={contentBlocks[0]}></BlockContent>
-      </div>
-    </section>
-
-    <section
-      class="relative flex items-center justify-items"
-      style="
-        flex: 0 0 100%;
-        scroll-snap-align: start;"
-      id="slide-2"
-    >
-      <div
-        class="font-body prose-invert max-w-none
-          prose-sm md:prose-base lg:prose-lg
-          prose-a:text-red-200
-          prose-a:hover:text-red-100 prose-il:text-red-500
-          prose-ul:list-disc prose-ul:pl-6
-          prose-ol:list-decimal prose-ol:pl-6
-          prose-li:marker:text-slate-400
-          prose-blockquote:border-l-4
-          prose-blockquote:border-slate-500
-          prose-blockquote:pl-6
-          prose-blockquote:italic
-          prose-blockquote:text-slate-400
-          prose-blockquote:not-prose"
-      >
-        <BlockContent block={contentBlocks[1]}></BlockContent>
-      </div>
-    </section>
-    <a class="nav-link cursor-default">&gt;</a>
-
+    {
+      contentBlocks && contentBlocks.length > 1 && (
+        contentBlocks.map((block, i) => (
+          <section
+            class="relative flex items-center justify-items"
+            style="
+              flex: 0 0 100%;
+              scroll-snap-align: start;"
+            id={`slide-${i + 1}`}
+          >
+            <div
+              class="font-body prose-invert max-w-none
+                prose-sm md:prose-base lg:prose-lg
+                prose-a:text-red-200
+                prose-a:hover:text-red-100 prose-il:text-red-500
+                prose-ul:list-disc prose-ul:pl-6
+                prose-ol:list-decimal prose-ol:pl-6
+                prose-li:marker:text-slate-400
+                prose-blockquote:border-l-4
+                prose-blockquote:border-slate-500
+                prose-blockquote:pl-6
+                prose-blockquote:italic
+                prose-blockquote:text-slate-400
+                prose-blockquote:not-prose"
+            >
+              <BlockContent block={block}></BlockContent>
+            </div>
+          </section>
+        ))
+      )
+    }
   </div>
 
-  <a 
-    href="#slide-2"
-    class="nav-link absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/30
-      hover:bg-black/50 text-white p-4 rounded-full cursor-pointer transition-all"
+  <button 
+    id="next-btn"
+    class="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/30
+      hover:bg-black/50 text-white p-4 rounded-full cursor-pointer transition-all focus:outline-none"
+    aria-label="Next slide"
   >
     &gt;
-  </a>
+  </button>
 </div>
 
 <script>
-  const navLinks = document.querySelectorAll('.nav-link');
+  const container = document.getElementById('hero-scroll-container') as HTMLElement;
+  const previousButton = document.getElementById('prev-btn');
+  const nextButton = document.getElementById('next-btn');
 
-  navLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault(); // Stop default page jump
-      
-      const TARGET_ID = link.getAttribute('href');
-      if (TARGET_ID) {
-        const targetElement = document.querySelector(TARGET_ID);
-  
-        if (targetElement) {
-          targetElement.scrollIntoView({
-            behavior: 'smooth',
-            block: 'nearest', // Prevents the vertical page jump
-            inline: 'start'   // Handles the horizontal slide
-          });
-        }
-      } else {
-        console.error('Couldn\'t find target id href at nav links of hero.');
-      }
-    });
+  nextButton?.addEventListener('click', () => {
+    const CURRENT_SCROLL = container.scrollLeft;
+    const SLIDE_WIDTH = container.offsetWidth;
+    
+    const NEXT_STROLL = CURRENT_SCROLL + SLIDE_WIDTH;
+    
+    if (NEXT_STROLL >= container.scrollWidth) {
+      container.scrollTo({ left: 0, behavior: 'smooth' });
+    } else {
+      container.scrollBy({ left: SLIDE_WIDTH, behavior: 'smooth' });
+    }
+  });
+
+  previousButton?.addEventListener('click', () => {
+    const CURRENT_SCROLL = container.scrollLeft;
+    const SLIDE_WIDTH = container.offsetWidth;
+    
+    if (CURRENT_SCROLL <= 0) {
+      container.scrollTo({ left: container.scrollWidth, behavior: 'smooth' });
+    } else {
+      container.scrollBy({ left: -SLIDE_WIDTH, behavior: 'smooth' });
+    }
   });
 </script>
