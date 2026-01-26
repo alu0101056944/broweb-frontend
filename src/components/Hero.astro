@@ -308,73 +308,87 @@ const contentBlocks = [
 ]
 
 ---
-
-<div
-  class="flex items-center h-full bg-blue-600
-    [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-  style="
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    overflow-y: hidden;"
->
-  <section
-    class="relative flex items-center justify-center bg-red-500"
-    style="
-      flex: 0 0 100%;
-      scroll-snap-align: start;"
-    id="slide-1"
+<div class="relative w-full h-full group">
+  
+  <a 
+    href="#slide-1" 
+    class="nav-link absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/30
+      hover:bg-black/50 text-white p-4 rounded-full cursor-pointer transition-all"
   >
-    <a class="nav-link border-2 cursor-default">&lt;</a>
-    <div
-      class="font-body prose-invert max-w-none
-        prose-sm md:prose-base lg:prose-lg
-        prose-a:text-red-200
-        prose-a:hover:text-red-100 prose-il:text-red-500
-        prose-ul:list-disc prose-ul:pl-6
-        prose-ol:list-decimal prose-ol:pl-6
-        prose-li:marker:text-slate-400
-        prose-blockquote:border-l-4
-        prose-blockquote:border-slate-500
-        prose-blockquote:pl-6
-        prose-blockquote:italic
-        prose-blockquote:text-slate-400
-        prose-blockquote:not-prose
-        "
-    >
-      <BlockContent block={contentBlocks[0]}></BlockContent>
-    </div>
-    <a href="#slide-2" class="nav-link">&gt;</a>
-  </section>
-
-  <section
-    class="relative flex items-center justify-items"
+    &lt;
+  </a>
+  <div
+    class="flex items-center h-full bg-blue-600
+      [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
     style="
-      flex: 0 0 100%;
-      scroll-snap-align: start;"
-    id="slide-2"
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      overflow-y: hidden;"
   >
-    <a href="#slide-1" class="nav-link border-2 hover:bg-red-200">&lt;</a>
-    <div
-      class="font-body prose-invert max-w-none
-        prose-sm md:prose-base lg:prose-lg
-        prose-a:text-red-200
-        prose-a:hover:text-red-100 prose-il:text-red-500
-        prose-ul:list-disc prose-ul:pl-6
-        prose-ol:list-decimal prose-ol:pl-6
-        prose-li:marker:text-slate-400
-        prose-blockquote:border-l-4
-        prose-blockquote:border-slate-500
-        prose-blockquote:pl-6
-        prose-blockquote:italic
-        prose-blockquote:text-slate-400
-        prose-blockquote:not-prose"
+    <section
+      class="relative flex items-center justify-center bg-red-500"
+      style="
+        flex: 0 0 100%;
+        scroll-snap-align: start;"
+      id="slide-1"
     >
-      <BlockContent block={contentBlocks[1]}></BlockContent>
-    </div>
+      <div
+        class="font-body prose-invert max-w-none
+          prose-sm md:prose-base lg:prose-lg
+          prose-a:text-red-200
+          prose-a:hover:text-red-100 prose-il:text-red-500
+          prose-ul:list-disc prose-ul:pl-6
+          prose-ol:list-decimal prose-ol:pl-6
+          prose-li:marker:text-slate-400
+          prose-blockquote:border-l-4
+          prose-blockquote:border-slate-500
+          prose-blockquote:pl-6
+          prose-blockquote:italic
+          prose-blockquote:text-slate-400
+          prose-blockquote:not-prose
+          "
+      >
+        <BlockContent block={contentBlocks[0]}></BlockContent>
+      </div>
+    </section>
+
+    <section
+      class="relative flex items-center justify-items"
+      style="
+        flex: 0 0 100%;
+        scroll-snap-align: start;"
+      id="slide-2"
+    >
+      <div
+        class="font-body prose-invert max-w-none
+          prose-sm md:prose-base lg:prose-lg
+          prose-a:text-red-200
+          prose-a:hover:text-red-100 prose-il:text-red-500
+          prose-ul:list-disc prose-ul:pl-6
+          prose-ol:list-decimal prose-ol:pl-6
+          prose-li:marker:text-slate-400
+          prose-blockquote:border-l-4
+          prose-blockquote:border-slate-500
+          prose-blockquote:pl-6
+          prose-blockquote:italic
+          prose-blockquote:text-slate-400
+          prose-blockquote:not-prose"
+      >
+        <BlockContent block={contentBlocks[1]}></BlockContent>
+      </div>
+    </section>
     <a class="nav-link cursor-default">&gt;</a>
-  </section>
 
+  </div>
+
+  <a 
+    href="#slide-2"
+    class="nav-link absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/30
+      hover:bg-black/50 text-white p-4 rounded-full cursor-pointer transition-all"
+  >
+    &gt;
+  </a>
 </div>
 
 <script>
