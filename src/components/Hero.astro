@@ -314,18 +314,22 @@ const contentBlocks = [
 ---
 <div class="relative w-full h-full group">
   
-  <button 
-    id="prev-btn"
-    class="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/30
-      hover:bg-black/50 text-white p-4 rounded-full cursor-pointer transition-all focus:outline-none"
-    aria-label="Previous slide"
-  >
-    &lt;
-  </button>
+  {
+    contentBlocks && contentBlocks.length > 1 && (
+      <button 
+        id="prev-btn"
+        class="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/30
+          hover:bg-black/50 text-white p-4 rounded-full cursor-pointer transition-all focus:outline-none"
+        aria-label="Previous slide"
+      >
+        &lt;
+      </button>
+    )
+  }
 
   <div
     id="hero-scroll-container"
-    class="flex items-center h-full bg-blue-600
+    class="mx-auto flex items-center h-full w-3/4 bg-blue-600
       [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
     style="
       overflow-x: auto;
@@ -334,10 +338,10 @@ const contentBlocks = [
       overflow-y: hidden;"
   >
     {
-      contentBlocks && contentBlocks.length > 1 && (
+      contentBlocks && contentBlocks.length > 0 && (
         contentBlocks.map((block, i) => (
           <section
-            class="relative flex items-center justify-items"
+            class="relative flex items-center justify-items bg-red-600"
             style="
               flex: 0 0 100%;
               scroll-snap-align: start;"
@@ -366,42 +370,88 @@ const contentBlocks = [
     }
   </div>
 
-  <button 
-    id="next-btn"
-    class="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/30
-      hover:bg-black/50 text-white p-4 rounded-full cursor-pointer transition-all focus:outline-none"
-    aria-label="Next slide"
-  >
-    &gt;
-  </button>
+  {
+    contentBlocks && contentBlocks.length > 1 && (
+      <button 
+        id="next-btn"
+        class="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/30
+          hover:bg-black/50 text-white p-4 rounded-full cursor-pointer transition-all focus:outline-none"
+        aria-label="Next slide"
+      >
+        &gt;
+      </button>
+    )
+  }
+
+  {contentBlocks && contentBlocks.length > 0 && (
+    <div
+      class="absolute z-30 right-1/2 bottom-[-3] px-2 py-0 bg-black/30 rounded-full
+        flex gap-1 w-fit"
+    >
+      {
+        <button
+          data-slide="0"
+          class="select-slide hover:bg-blue-300 cursor-pointer"
+        >
+          ⬤
+        </button>
+      }
+      {
+        contentBlocks.slice(1).map((_, i) => (
+          <button
+            data-slide={i + 1}
+            class="select-slide hover:bg-blue-300 cursor-pointer"
+          >
+            ○
+          </button>
+        ))
+      }
+    </div>
+  )}
 </div>
 
 <script>
   const container = document.getElementById('hero-scroll-container') as HTMLElement;
-  const previousButton = document.getElementById('prev-btn');
-  const nextButton = document.getElementById('next-btn');
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+  const dots = document.querySelectorAll<HTMLButtonElement>('.select-slide');
 
-  nextButton?.addEventListener('click', () => {
-    const CURRENT_SCROLL = container.scrollLeft;
-    const SLIDE_WIDTH = container.offsetWidth;
-    
-    const NEXT_STROLL = CURRENT_SCROLL + SLIDE_WIDTH;
-    
-    if (NEXT_STROLL >= container.scrollWidth) {
+  function updateDots() {
+    const activeIndex = Math.round(container.scrollLeft / container.offsetWidth);
+    dots.forEach((dot, i) => {
+      dot.textContent = i === activeIndex ? '⬤' : '○';
+    });
+  }
+
+  nextBtn?.addEventListener('click', () => {
+    const slideWidth = container.offsetWidth;
+    if (container.scrollLeft + slideWidth >= container.scrollWidth - 5) {
       container.scrollTo({ left: 0, behavior: 'smooth' });
     } else {
-      container.scrollBy({ left: SLIDE_WIDTH, behavior: 'smooth' });
+      container.scrollBy({ left: slideWidth, behavior: 'smooth' });
     }
   });
 
-  previousButton?.addEventListener('click', () => {
-    const CURRENT_SCROLL = container.scrollLeft;
-    const SLIDE_WIDTH = container.offsetWidth;
-    
-    if (CURRENT_SCROLL <= 0) {
+  prevBtn?.addEventListener('click', () => {
+    const slideWidth = container.offsetWidth;
+    if (container.scrollLeft <= 5) {
       container.scrollTo({ left: container.scrollWidth, behavior: 'smooth' });
     } else {
-      container.scrollBy({ left: -SLIDE_WIDTH, behavior: 'smooth' });
+      container.scrollBy({ left: -slideWidth, behavior: 'smooth' });
     }
   });
+
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      const slideIndex = parseInt(dot.dataset.slide || '0');
+      container.scrollTo({
+        left: slideIndex * container.offsetWidth,
+        behavior: 'smooth'
+      });
+    });
+  });
+
+  container.addEventListener('scroll', () => {
+    updateDots();
+  }, { passive: true });
 </script>
