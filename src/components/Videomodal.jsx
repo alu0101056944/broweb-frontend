@@ -26,6 +26,18 @@ export default function VideoModal({ listenOnId }) {
     };
   }, [listenOnId]);
 
+  useEffect(() => {
+    if (currentVideo.id) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [currentVideo.id]);
+
   if (!currentVideo.id) {
     return null;
   }
