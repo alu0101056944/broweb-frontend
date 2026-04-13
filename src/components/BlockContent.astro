@@ -5,20 +5,21 @@ import typography from '@tailwindcss/typography';
 import RichTextRenderer from "../components/RichRenderer"
 
 import Videobox from '../components/Videobox.astro'
+import Imagebox from './Imagebox.astro';
 
-const alignmentClasses = {
+const alignmentClasses : Record<string, string> = {
   left: 'mr-auto',
   center: 'mx-auto',
   right: 'ml-auto',
 };
 
-const paddingJustifyClasses = {
+const paddingJustifyClasses : Record<string, string> = {
   left: 'justify-start',
   center: 'justify-center',
   right: 'justify-end',
 }
 
-const columnClasses = {
+const columnClasses : Record<string, string>= {
   '2': 'lg:grid-cols-2',
   '3': 'lg:grid-cols-3',
   '4': 'lg:grid-cols-4',
@@ -180,7 +181,7 @@ const { block } = Astro.props;
   return (
     <div class="" id="video-gallery">
       {block.title && <h2 class="font-bold mb-3 text-center">{block.title}</h2>}
-      <div class={`grid grid-cols-1 sm:grid-cols-2 ${gridClass} gap-x-3 gap-y-15`} id={`media-grid-${block.id}`}>
+      <div class={`grid grid-cols-1 sm:grid-cols-2 ${gridClass} gap-x-3 gap-y-15`}>
         {validMediaItems.map(({ value: item }) => {
           const videoData = getVideoData(item.videoUrl);
           if (!videoData) return null;
@@ -203,6 +204,29 @@ const { block } = Astro.props;
               description={item.description}
               fallbackThumbnailUrl={fallbackThumbnailUrl}
               provider={provider}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+})()}
+
+{block.blockType === 'imageGrid' && (() => {
+  const gridClass = columnClasses[block.columns  || '3'.toString()];
+  const validImageItems = block.imageItems?.filter(item => typeof item.value === 'object' && item.value !== null) || [];
+
+  return (
+    <div class="" id="image-gallery">
+      {block.title && <h2 class="font-bold mb-3 text-center">{block.title}</h2>}
+      <div class={`grid grid-cols-1 sm:grid-cols-2 ${gridClass} gap-x-3 gap-y-15`}>
+        {validImageItems.map(({ value: item }) => {
+          return (
+            <Imagebox
+              imageUrl={item.imageUrl}
+              description={item.description}
+              imageWidth={item.imageWidth}
+              imageHeight={item.imageHeight}
             />
           );
         })}

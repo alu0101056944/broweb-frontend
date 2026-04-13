@@ -1,0 +1,38 @@
+---
+import { Image } from 'astro:assets';
+
+export interface Props {
+  imageUrl: string;
+  description: string;
+  imageWidth: number;
+  imageHeight: number;
+}
+
+const {
+  imageUrl, 
+  description, 
+  imageWidth,
+  imageHeight,
+} = Astro.props
+---
+
+<article
+  class="rounded-sm shadow-md overflow-hidden
+    transition-shadow duration-300 cursor-pointer bg-black
+    hover:border-gray-700"
+  data-trigger="view-image"
+  data-imageurl={imageUrl}
+  data-imagewidth={imageWidth}
+  data-imageheight={imageHeight}
+  data-description={description}
+>
+  <Image
+    class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+    src={imageUrl}
+    alt={description}
+    width={imageWidth}
+    height={imageHeight}
+    format="webp"
+    loading="lazy"
+  />
+</article>

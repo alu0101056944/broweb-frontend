@@ -6,6 +6,7 @@ import { Image } from 'astro:assets';
 
 import Menu from '../components/Menu.astro'
 import VideoModal from '../components/Videomodal';
+import ImageModal from '../components/Imagemodal';
 import BlockPage from "../components/BlockPage.astro"
 
 interface Props {
@@ -189,6 +190,7 @@ const {
       <div class="max-w-6xl mx-auto px-4 py-2">
         <slot/>
         <VideoModal client:load listenOnId="video-gallery"/>
+        <ImageModal client:load listenOnId="image-gallery"/>
         <script
           type="text/javascript"
           src="https://platform.linkedin.com/badges/js/profile.js"
