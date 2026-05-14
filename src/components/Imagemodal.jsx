@@ -41,7 +41,7 @@ export default function ImageModal({ listenOnId }) {
 
   return (
     <div
-        className="fixed inset-0 grid place-items-center z-50
+        className="fixed inset-0 flex items-center justify-center z-50
           bg-black/90"
         onClick={() => setCurrentImage(
           {
@@ -53,14 +53,13 @@ export default function ImageModal({ listenOnId }) {
         )}
     >
       <div
-          className="relative w-[90vw] max-w-4xl p-4 rounded-lg shadow-xl
-            bg-black"
+          className="relative flex flex-col items-center"
           onClick={(e) => e.stopPropagation()}
       >
         <button
-            className="absolute top-[-10px] right-[-10px] border-2
-                rounded-full w-6 h-6 text-sm cursor-pointer
-                bg-black text-gray-600 border-gray-800"
+            className="absolute -top-8 -right-8 z-10 flex h-8 w-8 cursor-pointer
+              items-center justify-center rounded-full border-2 border-gray-800
+              bg-black text-xl text-gray-400 hover:text-white"
             onClick={() => setCurrentImage({
                 imageUrl: null,
                 description: null,
@@ -71,9 +70,9 @@ export default function ImageModal({ listenOnId }) {
         >
           &times;
         </button>
-        <div className="">
+        <div className="overflow-hidden rounded-lg shadow-2xl">
           <img
-            className="w-full h-full object-contain"
+            className="w-auto h-auto max-w-full max-h-[85vh] object-contain"
             src={currentImage.imageUrl}
             alt={currentImage.description || "Gallery image"}
             width={currentImage.imageWidth}

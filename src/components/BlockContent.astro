@@ -219,7 +219,8 @@ const { block } = Astro.props;
   return (
     <div id="image-gallery">
       {block.title && <h2 class="font-bold mb-3 text-center">{block.title}</h2>}
-      <div class={`grid grid-cols-1 sm:grid-cols-2 ${gridClass} gap-x-3 gap-y-15`}>
+      <div class={`grid grid-cols-1 sm:grid-cols-2 ${gridClass} gap-x-3 gap-y-15
+          justify-items-center`}>
         {validImageItems.map(({ value: item }) => {
           const WIDTH = item.changeImageDimensions ? item.imageWidth : item.dimensions.width;
           const HEIGHT = item.changeImageDimensions ? item.imageHeight : item.dimensions.height;
