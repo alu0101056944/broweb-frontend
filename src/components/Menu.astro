@@ -29,7 +29,7 @@ let themeSettings : {
   subText: 'Audiovisual producer',
   separatorChar: '◆',
   minColumnWidthPx: 140,
-  gap: 0,
+  gap: 4,
   menuWidthPercent: 60,
 };
 const settingsRequest = await fetch(`${SERVER_URL}api/globals/theme-settings`);
@@ -41,7 +41,6 @@ if (settingsRequest.ok) {
 }
 
 const navStyles = {
-  '--min-col': `${themeSettings.minColumnWidthPx}px`,
   '--gap': `${themeSettings.gap * 0.25}em`,
   '--menu-width': `${themeSettings.menuWidthPercent}%`,
 };
@@ -59,11 +58,10 @@ const activeClasses = "text-white"
 
 <nav
   style={navStyles}
-  class:list={["flex flex-col flex-wrap mt-5 md:mt-0 gap-3",
-    "md:w-full md:grid",
-    "md:gap-x-[var(--gap)] md:gap-y-[var(--gap)]",
-    "md:grid-cols-[repeat(auto-fit,minmax(var(--min-col),1fr))]",
-    "md:justify-items-center md:items-center lg:w-[var(--menu-width)]"]}>
+  class:list={[
+    "flex flex-col flex-wrap mt-5 md:mt-0 gap-3",
+    "md:flex-row md:justify-center md:items-center md:w-full md:gap-[var(--gap)]",
+    "lg:justify-start lg:w-[var(--menu-width)]"]}>
   <a
     href="/"
     class:list={[

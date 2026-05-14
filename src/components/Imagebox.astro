@@ -17,9 +17,9 @@ const {
 ---
 
 <article
-  class="rounded-sm shadow-md overflow-hidden
-    transition-shadow duration-300 cursor-pointer bg-black
-    hover:border-gray-700"
+  class="flex rounded-sm shadow-md overflow-hidden
+    transition-shadow duration-300 cursor-pointer
+    hover:border-gray-700 justify-center"
   data-trigger="view-image"
   data-imageurl={imageUrl}
   data-imagewidth={imageWidth}
@@ -27,7 +27,7 @@ const {
   data-description={description}
 >
   <Image
-    class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+    class={"transition-transform duration-300"}
     src={imageUrl}
     alt={description}
     width={imageWidth}
