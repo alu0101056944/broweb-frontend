@@ -217,16 +217,19 @@ const { block } = Astro.props;
   const validImageItems = block.imageItems?.filter(item => typeof item.value === 'object' && item.value !== null) || [];
 
   return (
-    <div class="" id="image-gallery">
+    <div id="image-gallery">
       {block.title && <h2 class="font-bold mb-3 text-center">{block.title}</h2>}
       <div class={`grid grid-cols-1 sm:grid-cols-2 ${gridClass} gap-x-3 gap-y-15`}>
         {validImageItems.map(({ value: item }) => {
+          const WIDTH = item.changeImageDimensions ? item.imageWidth : item.dimensions.width;
+          const HEIGHT = item.changeImageDimensions ? item.imageHeight : item.dimensions.height;
+
           return (
             <Imagebox
               imageUrl={item.imageUrl}
               description={item.description}
-              imageWidth={item.imageWidth}
-              imageHeight={item.imageHeight}
+              imageWidth={WIDTH}
+              imageHeight={HEIGHT}
             />
           );
         })}
