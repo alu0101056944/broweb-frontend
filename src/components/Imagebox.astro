@@ -19,7 +19,8 @@ const {
 <article
   class="flex rounded-sm shadow-md overflow-hidden
     transition-shadow duration-300 cursor-pointer
-    hover:border-gray-700 justify-center"
+    hover:border-gray-700 justify-center aspect-square
+    shrink-0 w-full"
   data-trigger="view-image"
   data-imageurl={imageUrl}
   data-imagewidth={imageWidth}
@@ -27,7 +28,7 @@ const {
   data-description={description}
 >
   <Image
-    class={"transition-transform duration-300"}
+    class={"object-contain transition-transform duration-300"}
     src={imageUrl}
     alt={description}
     width={imageWidth}
