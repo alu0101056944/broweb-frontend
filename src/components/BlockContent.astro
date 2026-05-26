@@ -212,8 +212,11 @@ const { block } = Astro.props;
   return (
     <div id="image-gallery">
       {block.title && <h2 class="font-bold mb-3 text-center">{block.title}</h2>}
-      <div class={`grid grid-cols-[repeat(var(--columnsSmallSize),_minmax(0,_1fr))] sm:grid-cols-[repeat(var(--columnsMediumSize),_minmax(0,_1fr))]
-          lg:grid-cols-[repeat(var(--columns),_minmax(0,_1fr))] gap-x-3 gap-y-15 justify-items-center`}
+      <div class={`grid
+          grid-cols-[repeat(var(--columnsSmallSize),_minmax(0,_1fr))]
+          sm:grid-cols-[repeat(var(--columnsMediumSize),_minmax(0,_1fr))]
+          lg:grid-cols-[repeat(var(--columns),_minmax(0,_1fr))]
+          gap-x-3 gap-y-3`}
           style={{
             '--columns': block.columns,
             '--columnsMediumSize': block.columnsMediumSize,

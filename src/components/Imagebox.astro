@@ -17,18 +17,18 @@ const {
 ---
 
 <article
-  class="flex rounded-sm shadow-md overflow-hidden
+  class="flex items-center justify-center rounded-sm shadow-md overflow-hidden
     transition-shadow duration-300 cursor-pointer
-    hover:border-gray-700 justify-center aspect-square
-    shrink-0 w-full"
-  data-trigger="view-image"
+    hover:border-gray-700 justify-center
+    w-full not-prose"
+  data-trigger="view-image" 
   data-imageurl={imageUrl}
   data-imagewidth={imageWidth}
   data-imageheight={imageHeight}
   data-description={description}
 >
   <Image
-    class={"object-contain transition-transform duration-300"}
+    class={"max-w-full max-h-full object-contain transition-transform duration-300"}
     src={imageUrl}
     alt={description}
     width={imageWidth}
