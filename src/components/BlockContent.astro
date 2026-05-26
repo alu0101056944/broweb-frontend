@@ -19,12 +19,6 @@ const paddingJustifyClasses : Record<string, string> = {
   right: 'justify-end',
 }
 
-const columnClasses : Record<string, string>= {
-  '2': 'lg:grid-cols-2',
-  '3': 'lg:grid-cols-3',
-  '4': 'lg:grid-cols-4',
-};
-
 const getVideoData = (url: string) => {
   const youtubeUrlRegexp = /(?:watch\?v=|youtu\.be\/|\/(?:embed|shorts|live)\/)([a-zA-Z0-9_-]{11})/;
   const vimeoUrlRegexp = /(?:vimeo\.com\/|player\.vimeo\.com\/video\/)([0-9]+)/;
@@ -213,14 +207,18 @@ const { block } = Astro.props;
 })()}
 
 {block.blockType === 'imageGrid' && (() => {
-  const gridClass = columnClasses[block.columns  || '3'.toString()];
   const validImageItems = block.imageItems?.filter(item => typeof item.value === 'object' && item.value !== null) || [];
 
   return (
     <div id="image-gallery">
       {block.title && <h2 class="font-bold mb-3 text-center">{block.title}</h2>}
-      <div class={`grid grid-cols-1 sm:grid-cols-2 ${gridClass} gap-x-3 gap-y-15
-          justify-items-center`}>
+      <div class={`grid grid-cols-[repeat(var(--columnsSmallSize),_minmax(0,_1fr))] sm:grid-cols-[repeat(var(--columnsMediumSize),_minmax(0,_1fr))]
+          lg:grid-cols-[repeat(var(--columns),_minmax(0,_1fr))] gap-x-3 gap-y-15 justify-items-center`}
+          style={{
+            '--columns': block.columns,
+            '--columnsMediumSize': block.columnsMediumSize,
+            '--columnsSmallSize': block.columnsSmallSize,
+          }}>
         {validImageItems.map(({ value: item }) => {
           const WIDTH = item.changeImageDimensions ? item.imageWidth : item.dimensions.width;
           const HEIGHT = item.changeImageDimensions ? item.imageHeight : item.dimensions.height;
