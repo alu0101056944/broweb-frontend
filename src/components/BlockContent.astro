@@ -208,6 +208,7 @@ const { block } = Astro.props;
 
 {block.blockType === 'imageGrid' && (() => {
   const validImageItems = block.imageItems?.filter(item => typeof item.value === 'object' && item.value !== null) || [];
+  console.log(4)
 
   return (
     <div id="image-gallery">
@@ -216,11 +217,13 @@ const { block } = Astro.props;
           grid-cols-[repeat(var(--columnsSmallSize),_minmax(0,_1fr))]
           sm:grid-cols-[repeat(var(--columnsMediumSize),_minmax(0,_1fr))]
           lg:grid-cols-[repeat(var(--columns),_minmax(0,_1fr))]
-          gap-x-3 gap-y-3`}
+          gap-x-[var(--gapX)] gap-y-[var(--gapY)]`}
           style={{
             '--columns': block.columns,
             '--columnsMediumSize': block.columnsMediumSize,
             '--columnsSmallSize': block.columnsSmallSize,
+            '--gapX': `${block.gapX}px`,
+            '--gapY': `${block.gapY}px`,
           }}>
         {validImageItems.map(({ value: item }) => {
           const WIDTH = item.changeImageDimensions ? item.imageWidth : item.dimensions.width;
